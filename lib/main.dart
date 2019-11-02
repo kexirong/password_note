@@ -54,19 +54,19 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             flex: 1,
             child: Container(
+              alignment: Alignment.topCenter,
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border(right: BorderSide(color: Colors.grey[400])),
               ),
               child: ListView(
-               
                 shrinkWrap: true,
-                padding: const EdgeInsets.all(20.0),
                 children: <Widget>[
-                  const Text('aa'),
-                  const Text('bb'),
-                  const Text('cc'),
-                  const Text('dd'),
+                  const ListTile(title: Text('aaaaa')),
+                  const ListTile(title: Text('bbbbb')),
+                  const ListTile(title: Text('ccccc')),
+                  const ListTile(title: Text('ddddd')),
+                  IconButton(icon: Icon(Icons.add), onPressed: () {}),
                 ],
               ),
             ),
