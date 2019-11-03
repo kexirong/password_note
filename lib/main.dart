@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'load_note.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,18 +26,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Map noteData = {
-    'aaa': [
-      {'name': 'aaa'},
-      {'name': 'bbb'},
-      {'name': 'ccc'}
-    ],
-    'bbb': [
-      {'name': 'aaa'},
-      {'name': 'bbb'},
-      {'name': 'ccc'}
-    ]
-  };
+  NoteData _noteData = NoteData();
 
   @override
   Widget build(BuildContext context) {
@@ -54,20 +44,26 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             flex: 1,
             child: Container(
+
               alignment: Alignment.topCenter,
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border(right: BorderSide(color: Colors.grey[400])),
               ),
-              child: ListView(
-                shrinkWrap: true,
-                children: <Widget>[
-                  const ListTile(title: Text('aaaaa')),
-                  const ListTile(title: Text('bbbbb')),
-                  const ListTile(title: Text('ccccc')),
-                  const ListTile(title: Text('ddddd')),
-                  IconButton(icon: Icon(Icons.add), onPressed: () {}),
-                ],
+              child: ListView.separated(
+                padding:EdgeInsets.all(8.0),
+                itemCount: _noteData.length,
+                //列表项构造器
+                itemBuilder: (BuildContext context, int index) {
+                  return Text(_noteData.getKeyAt(index),
+                      textAlign: TextAlign.center);
+                },
+                //分割器构造器
+                separatorBuilder: (BuildContext context, int index) {
+                  return Divider(
+                    color: Colors.grey,
+                  );
+                },
               ),
             ),
           ),
