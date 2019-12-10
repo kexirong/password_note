@@ -38,6 +38,10 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() => _index = index);
   }
 
+  void _addGroup(String name) {
+    setState(() => _noteData.addGroup(NoteGroup(name)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ListView.separated(
                 padding:
                     const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0),
-                itemCount: _noteData.getAccountsAt(_index).length,
+                itemCount: _noteData.getAccountsAt(_index)?.length ?? 0,
                 itemBuilder: (BuildContext context, int index) {
                   final noteAccount = _noteData.getAccountsAt(_index)[index];
                   return Padding(
@@ -177,13 +181,12 @@ class _MyHomePageState extends State<MyHomePage> {
             actions: <Widget>[
               FlatButton(
                 child: Text("取消"),
-                onPressed: () => Navigator.pop(context), // 关闭对话框
+                onPressed: () => Navigator.pop(context),
               ),
               FlatButton(
                 child: Text("确认"),
                 onPressed: () {
-                  //关闭对话框并返回true
-                  print(_gNameController.text);
+                  _addGroup(_gNameController.text);
                   Navigator.pop(context);
                 },
               ),

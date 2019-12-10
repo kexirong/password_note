@@ -1,51 +1,40 @@
+import 'package:password_note/util.dart';
+
 enum ItemType { entry, group, account }
+
 class NoteData {
   NoteDataEntry _dataEntry;
 
-//  {
-//    '分组一': [
-//      {'name': 'aaa1111111111', 'account': '12321', 'pass': '123312'},
-//      {'name': 'bbb1', 'account': '12321', 'pass': '123312'},
-//      {'name': 'ccc1', 'account': '12321', 'pass': '123312'}
-//    ],
-//    '分组二': [
-//      {'name': 'aaa2', 'account': '12321', 'pass': '123312'},
-//      {'name': 'bbb2', 'account': '12321', 'pass': '123312'},
-//      {'name': 'ccc2', 'account': '12321', 'pass': '123312'}
-//    ],
-//    '分组三': [
-//      {'name': 'aaa3', 'account': '12321', 'pass': '123312'},
-//      {'name': 'bbb3', 'account': '12321', 'pass': '123312'},
-//      {'name': 'ccc3', 'account': '12321', 'pass': '123312'}
-//    ],
-//    '分组四': [
-//      {'name': 'aaa4', 'account': '12321', 'pass': '123312'},
-//      {'name': 'bbb4', 'account': '12321', 'pass': '123312'},
-//      {'name': 'ccc4', 'account': '12321', 'pass': '123312'}
-//    ]
-//  };
-
-  factory NoteData() => _getInstance();
+  factory NoteData({NoteDataEntry dataEntry}) =>
+      _getInstance(dataEntry: dataEntry);
   static NoteData _instance;
 
-
-  NoteData._internal() {
+  NoteData._internal({NoteDataEntry dataEntry}) {
     // 初始化
+    if (dataEntry == null) {
+      this._dataEntry = NoteDataEntry();
+    } else {
+      this._dataEntry = dataEntry;
+    }
   }
 
-  static NoteData _getInstance() {
-    if (_instance == null) {
-      _instance = new NoteData._internal();
+  static NoteData _getInstance({NoteDataEntry dataEntry}) {
+    if (_instance == null || dataEntry != null) {
+      _instance = NoteData._internal(dataEntry: dataEntry);
     }
     return _instance;
   }
 
   int get length {
-    return _dataEntry.groups.length;
+    return _dataEntry.length;
+  }
+
+  String get id {
+    return _dataEntry.id;
   }
 
   NoteGroup getGroupAt(int index) {
-    return index > 0 && length > index ? _dataEntry.groups[index] : null;
+    return index >= 0 && length > index ? _dataEntry.groups[index] : null;
   }
 
   List<NoteAccount> getAccountsAt(int index) {
@@ -54,15 +43,32 @@ class NoteData {
         : null;
   }
 
-  void addGroup(String name) {}
+  void addGroup(NoteGroup group) {
+    if (group != null) {
+      _dataEntry.groups.add(group);
+    }
+  }
+
+  NoteGroup getGroup(String id) {
+    return _dataEntry.groups
+        .firstWhere((el) => (el?.id == id), orElse: () => null);
+  }
 }
 
 class NoteDataEntry {
+  String id;
   int createdAt;
   int updatedAt;
   List<NoteGroup> groups;
 
-  NoteDataEntry() : this.createdAt = DateTime.now().millisecondsSinceEpoch;
+  int get length {
+    return groups.length;
+  }
+
+  NoteDataEntry()
+      : this.id = uuid(),
+        this.createdAt = DateTime.now().millisecondsSinceEpoch,
+        this.groups = <NoteGroup>[];
 
   NoteDataEntry.fromJson(Map<String, dynamic> json)
       : createdAt = json['created_at'],
@@ -75,12 +81,33 @@ class NoteDataEntry {
 }
 
 class NoteGroup {
-  String name;
-  int createdAt;
-  int updatedAt;
+
+  String id, name;
+  int createdAt, updatedAt;
   List<NoteAccount> accounts;
 
-  NoteGroup(this.name) : this.createdAt = DateTime.now().millisecondsSinceEpoch;
+  NoteGroup(this.name)
+      : this.id = uuid(),
+        this.createdAt = DateTime.now().millisecondsSinceEpoch,
+        this.accounts = <NoteAccount>[];
+
+  int get length {
+    return accounts.length;
+  }
+
+  void addAccount(NoteAccount account) {
+    if (account != null) {
+      accounts.add(account);
+    }
+  }
+
+  NoteAccount getAccount(String id) {
+    return accounts.firstWhere((el) => (el?.id == id), orElse: () => null);
+  }
+
+  NoteAccount getAccountAt(int index) {
+    return index > 0 && length > index ? accounts[index] : null;
+  }
 
   NoteGroup.fromJson(Map<String, dynamic> json)
       : name = json['name'],
@@ -95,13 +122,13 @@ class NoteGroup {
 }
 
 class NoteAccount {
-  String name;
-  String account;
-  int createdAt;
-  int updatedAt;
+  String id, name, account;
+  int createdAt, updatedAt;
   Map<String, String> extendField;
 
-  NoteAccount(this.name, this.account, {this.extendField});
+  NoteAccount(this.name, this.account, {this.extendField})
+      : this.id = uuid(),
+        this.createdAt = DateTime.now().millisecondsSinceEpoch;
 
   NoteAccount.fromJson(Map<String, dynamic> json)
       : name = json['name'],

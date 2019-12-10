@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import "package:flutter_test/flutter_test.dart";
 import "package:password_note/note_data.dart";
 
@@ -5,60 +7,78 @@ import 'package:password_note/util.dart';
 
 void main() {
   var test_groups = [
-    {"type": ItemType.group.index, 'content': '{"name": "分组一"}'},
-    {"type": ItemType.group.index, 'content': '{"name": "分组二"}'},
-    {"type": ItemType.group.index, 'content': '{"name": "分组三"}'},
+    {"type": ItemType.group.index, 'id': 'g1111', 'content': '{"name": "分组一"}'},
+    {"type": ItemType.group.index, 'id': 'g2222', 'content': '{"name": "分组二"}'},
+    {"type": ItemType.group.index, 'id': 'g3333', 'content': '{"name": "分组三"}'},
   ];
   var test_accounts = [
     {
       "type": ItemType.account.index,
-      "group": "分组三",
+      "id": "a111",
+      "parent_id": "g3333",
       'content': '"name": "aaa3", "account": "12321", "pass": "123312"}'
     },
     {
       "type": ItemType.account.index,
-      "group": "分组三",
+      "id": "a222",
+      "parent_id": "g3333",
       'content': '"name": "bbb3", "account": "12321", "pass": "123312"}'
     },
     {
       "type": ItemType.account.index,
-      "group": "分组三",
+      "id": "a333",
+      "parent_id": "g3333",
       'content': '"name": "ccc3", "account": "12321", "pass": "123312"}'
     },
     {
       "type": ItemType.account.index,
-      "group": "分组二",
+      "id": "a4444",
+      "parent_id": "g2222",
       'content': '"name": "aaa2", "account": "12321", "pass": "123312"}'
     },
     {
       "type": ItemType.account.index,
-      "group": "分组二",
+      "id": "a5555",
+      "parent_id": "g2222",
       'content': '"name": "bbb2", "account": "12321", "pass": "123312"}'
     },
     {
       "type": ItemType.account.index,
-      "group": "分组二",
+      "id": "a6666",
+      "parent_id": "g2222",
       'content': '"name": "ccc2", "account": "12321", "pass": "123312"}'
     },
     {
       "type": ItemType.account.index,
-      "group": "分组一",
+      "id": "a7777",
+      "parent_id": "g1111",
       'content': '"name": "aaa1", "account": "12321", "pass": "123312"}'
     },
     {
       "type": ItemType.account.index,
-      "group": "分组一",
+      "id": "a8888",
+      "parent_id": "1111",
       'content': '"name": "bbb1", "account": "12321", "pass": "123312"}'
     },
     {
       "type": ItemType.account.index,
-      "group": "分组一",
+      "parent_id": "1111",
       'content': '"name": "ccc1", "account": "12321", "pass": "123312"}'
     },
   ];
-  test("测试 value 递增", () {
+  test("NoteData", () {
     final noteData = NoteData();
-    print(uuid());
+    print(noteData.id);
+    NoteGroup group;
+    for (var e in test_groups) {
+      Map groupMap = json.decode(e['content']);
+      group = NoteGroup.fromJson(groupMap);
+      print(group.name);
+      noteData.addGroup(group);
+    }
+    for (int i = 0; i < noteData.length; i++) {
+      print(noteData.getGroupAt(i).name);
+    }
     expect(noteData, noteData);
   });
 }
