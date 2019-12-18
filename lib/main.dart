@@ -26,11 +26,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  _MyHomePageState(NoteData _noteData) {
-    this._noteData = _noteData;
-  }
+  _MyHomePageState(this.noteData);
 
-  NoteData _noteData;
+  final NoteData noteData;
 
   int _index = 0;
 
@@ -39,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _addGroup(String name) {
-    setState(() => _noteData.addGroup(NoteGroup(name)));
+    setState(() => noteData.addGroup(NoteGroup(name: name)));
   }
 
   @override
@@ -48,7 +46,17 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.add), onPressed: () {}),
+          IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                if (noteData.length == 0) {
+                  addGroup();
+                } else {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return AccountAction(NoteAccount());
+                  }));
+                }
+              }),
           IconButton(icon: Icon(Icons.search), onPressed: () {}),
           IconButton(icon: Icon(Icons.menu), onPressed: () {}),
         ],
@@ -68,9 +76,9 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ListView.separated(
                 padding:
                     const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0),
-                itemCount: _noteData.length + 1,
+                itemCount: noteData.length + 1,
                 itemBuilder: (BuildContext context, int index) {
-                  if (index == _noteData.length) {
+                  if (index == noteData.length) {
                     return Material(
                       color: Colors.white,
                       child: IconButton(
@@ -86,13 +94,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         borderRadius: BorderRadius.circular(50),
                         child: Padding(
                           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                          child: Text(_noteData.getGroupAt(index).name,
-                              style: TextStyle(
-                                  color: _index == index
-                                      ? Theme.of(context).accentColor
-                                      : null),
-                              textAlign: TextAlign.center,
-                              overflow: TextOverflow.ellipsis),
+                          child: Text(
+                            noteData.getGroupAt(index).name,
+                            style: TextStyle(
+                                color: _index == index
+                                    ? Theme.of(context).accentColor
+                                    : null),
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         onTap: () {
                           _updateIndex(index);
@@ -122,9 +132,9 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ListView.separated(
                 padding:
                     const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0),
-                itemCount: _noteData.getAccountsAt(_index)?.length ?? 0,
+                itemCount: noteData.getAccountsAt(_index)?.length ?? 0,
                 itemBuilder: (BuildContext context, int index) {
-                  final noteAccount = _noteData.getAccountsAt(_index)[index];
+                  final noteAccount = noteData.getAccountsAt(_index)[index];
                   return Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                       child: Row(
@@ -196,12 +206,27 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class NewRoute extends StatelessWidget {
+enum _Action { add, edit }
+
+class AccountAction extends StatefulWidget {
+  AccountAction(this.account, {Key key})
+      : this._action = account.name == null ? _Action.add : _Action.edit,
+        super(key: key);
+  final NoteAccount account;
+  final _Action _action;
+
+  @override
+  _MyAccountActionState createState() => _MyAccountActionState();
+}
+
+class _MyAccountActionState extends State<AccountAction> {
+  _MyAccountActionState();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("New route"),
+        title: Text(widget._action == _Action.add ? '添加账号' : '编辑账号'),
       ),
       body: Center(
         child: Text("This is new route"),

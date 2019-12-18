@@ -86,7 +86,7 @@ class NoteGroup {
   int createdAt, updatedAt;
   List<NoteAccount> accounts;
 
-  NoteGroup(this.name)
+  NoteGroup({this.name})
       : this.id = uuid(),
         this.createdAt = DateTime.now().millisecondsSinceEpoch,
         this.accounts = <NoteAccount>[];
@@ -126,9 +126,10 @@ class NoteAccount {
   int createdAt, updatedAt;
   Map<String, String> extendField;
 
-  NoteAccount(this.name, this.account, {this.extendField})
+  NoteAccount({this.name})
       : this.id = uuid(),
-        this.createdAt = DateTime.now().millisecondsSinceEpoch;
+        this.createdAt = DateTime.now().millisecondsSinceEpoch,
+   this.extendField=<String, String>{};
 
   NoteAccount.fromJson(Map<String, dynamic> json)
       : name = json['name'],
