@@ -1,13 +1,13 @@
 import 'dart:math';
 
-final _intToHex = (() {
+final _intToHex = () {
   List<String> _cache = List<String>(256);
 
   for (int i = 0; i < 256; i++) {
     _cache[i] = i.toRadixString(16);
   }
   return _cache;
-})();
+}();
 
 String uuid() {
   var rands = List<int>(16);
@@ -33,5 +33,3 @@ String uuid() {
       '${_intToHex[rands[i++]]}${_intToHex[rands[i++]]}'
       '${_intToHex[rands[i++]]}${_intToHex[rands[i++]]}';
 }
-
-

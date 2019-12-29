@@ -17,6 +17,36 @@ class AccountAction extends StatefulWidget {
 class _MyAccountActionState extends State<AccountAction> {
   _MyAccountActionState();
 
+  List<List<TextEditingController>> _accountFields;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _accountFields = <List<TextEditingController>>[];
+    _accountFields.add(
+      [
+        TextEditingController(text: '名称'),
+        TextEditingController(text: widget.account.name),
+      ],
+    );
+    _accountFields.add(
+      [
+        TextEditingController(text: '账号'),
+        TextEditingController(text: widget.account.account),
+      ],
+    );
+
+    widget.account.extendField.forEach((k, v) {
+      _accountFields.add(
+        [
+          TextEditingController(text: k),
+          TextEditingController(text: v),
+        ],
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -35,70 +65,86 @@ class _MyAccountActionState extends State<AccountAction> {
                   ),
                 ),
               ]),
-          body: Container(
-              decoration: BoxDecoration(
-                border: Border(
-                    top: BorderSide(
-                        color: Colors.grey, width: 0.5),
-                    right: BorderSide(
-                        color: Colors.grey, width: 0.5),
-                    left: BorderSide(
-                        color: Colors.grey, width: 0.5),
+          body: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Table(
+                columnWidths: const {
+                  0: FlexColumnWidth(1.0),
+                  1: FlexColumnWidth(2.5),
+                },
+                border: TableBorder.all(
+                  color: Colors.grey,
+                  width: 0.5,
                 ),
-              ),
-              margin: const EdgeInsets.all(8),
-              child: ListView.builder(
-                  itemCount: 3,
-                  shrinkWrap: true,
-                  itemExtent: 50.0, //强制高度为50.0
-                  itemBuilder: (BuildContext context, int index) {
-                    return Row(children: <Widget>[
-                      Expanded(
-                          flex: 1,
-                          child: Container(
-                              decoration: BoxDecoration(
-                                border:  Border(
-                                        bottom: BorderSide(
-                                            color: Colors.grey, width: 0.5),
-                                        right: BorderSide(
-                                            color: Colors.grey, width: 0.5)),
-                              ),
-                              child: ListTile(
-                                title: Text(
-                                  "$index",
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                onTap: () {
-                                  print('点击');
-                                },
-                              ))),
-                      Expanded(
-                          flex: 2,
-                          child: Container(
-                              decoration: BoxDecoration(
-                                border: Border(
-                                        bottom: BorderSide(
-                                            color: Colors.grey, width: 0.5),
-                                      ),
-                              ),
-                              child: ListTile(
-                                title: Text(
-                                  "$index",
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                onTap: () {
-                                  print('点击');
-                                },
-                              )))
-                    ]);
-                  })),
+                children: _buildTableRow(),
+              )),
         ),
         onWillPop: () {
           print("返回键点击了");
           Navigator.pop(context, 'hehe');
           return Future.value(false);
         });
+  }
+
+  List<TableRow> _buildTableRow() {
+    var rows = <TableRow>[];
+    for (var index = 0; index < _accountFields.length; index++) {
+      rows.add(
+        TableRow(
+          children: <Widget>[
+            TableCell(
+              verticalAlignment: TableCellVerticalAlignment.middle,
+              child: TextField(
+                enabled: index > 1,
+                autofocus: _accountFields[index][0].text.length == 0,
+                maxLength: 12,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+                controller: _accountFields[index][0],
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.only(
+                      left: 8, right: 8, top: 16, bottom: 16),
+                  border: InputBorder.none,
+                  counterText: '',
+                ),
+              ),
+            ),
+            TableCell(
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 5,
+                    child: TextField(
+                      autofocus: _accountFields[index][1].text.length == 0,
+                      maxLines: 4,
+                      minLines: 1,
+                      style: TextStyle(fontSize: 18),
+                      controller: _accountFields[index][1],
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.only(
+                            left: 8, right: 0, top: 16, bottom: 16),
+                        border: InputBorder.none,
+                        counterText: '',
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Icon(
+                      Icons.highlight_off,
+                      size: 20,
+                      color: Colors.grey,
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      );
+    }
+    return rows;
   }
 }

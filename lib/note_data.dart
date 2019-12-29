@@ -81,7 +81,6 @@ class NoteDataEntry {
 }
 
 class NoteGroup {
-
   String id, name;
   int createdAt, updatedAt;
   List<NoteAccount> accounts;
@@ -129,7 +128,11 @@ class NoteAccount {
   NoteAccount({this.name})
       : this.id = uuid(),
         this.createdAt = DateTime.now().millisecondsSinceEpoch,
-   this.extendField=<String, String>{};
+        this.extendField = <String, String>{};
+
+  int get length {
+    return extendField.length + 2;
+  }
 
   NoteAccount.fromJson(Map<String, dynamic> json)
       : name = json['name'],

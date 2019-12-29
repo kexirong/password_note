@@ -26,9 +26,12 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() => noteData.addGroup(NoteGroup(name: name)));
   }
 
+  var _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
@@ -36,6 +39,10 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: Icon(Icons.add),
               onPressed: () async {
                 if (noteData.length == 0) {
+                  _scaffoldKey.currentState.showSnackBar(SnackBar(
+                    content: Text('无分组，先创建分组'),
+                    duration: Duration(seconds: 1),
+                  ));
                   addGroup();
                 } else {
                   var result = await Navigator.push(context,
@@ -61,7 +68,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               child: ListView.builder(
                 itemCount: noteData.length + 1,
-
                 itemBuilder: (BuildContext context, int index) {
                   if (index == noteData.length) {
                     return IconButton(
@@ -90,9 +96,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: _index == index
                                 ? Theme.of(context).accentColor
                                 : null,
-//                                fontWeight: _index == index
-//                                    ? FontWeight.w600
-//                                    : FontWeight.normal
                           ),
                           textAlign: TextAlign.center,
                           overflow: TextOverflow.ellipsis,
@@ -124,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   return Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Expanded(
                             flex: 1,
