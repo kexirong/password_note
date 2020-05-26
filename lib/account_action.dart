@@ -65,23 +65,62 @@ class _MyAccountActionState extends State<AccountAction> {
                   ),
                 ),
               ]),
-          body: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Table(
-                columnWidths: const {
-                  0: FlexColumnWidth(1.0),
-                  1: FlexColumnWidth(2.5),
-                },
-                border: TableBorder.all(
-                  color: Colors.grey,
-                  width: 0.5,
+          body: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Table(
+                  columnWidths: const {
+                    0: FlexColumnWidth(1.0),
+                    1: FlexColumnWidth(2.5),
+                  },
+                  border: TableBorder.all(
+                    color: Colors.grey,
+                    width: 0.5,
+                  ),
+                  children: _buildTableRow(),
                 ),
-                children: _buildTableRow(),
-              )),
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                      child: FlatButton(
+                        textColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50)),
+                        child: Text("保存"),
+                        onPressed: () {},
+                      )
+                  ),
+                  Expanded(
+                    flex: 1,
+                      child: FlatButton(
+                        textColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50)),
+                        child: Text("保存"),
+                        onPressed: () {},
+                      )
+                  ),
+                  Expanded(
+                    flex: 1,
+                      child: FlatButton(
+                        textColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50)),
+                        child: Text("保存"),
+                        onPressed: () {},
+                      )
+                  )
+                ],
+              )
+            ],
+          ),
         ),
         onWillPop: () {
           print("返回键点击了");
-          Navigator.pop(context, 'hehe');
+          Navigator.pop(context, 'none');
           return Future.value(false);
         });
   }

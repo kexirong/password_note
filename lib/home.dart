@@ -26,7 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() => noteData.addGroup(NoteGroup(name: name)));
   }
 
-  var _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
