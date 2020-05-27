@@ -54,21 +54,15 @@ class _MyAccountActionState extends State<AccountAction> {
           appBar: AppBar(
               title: Text(widget._action == _Action.add ? '添加账号' : '编辑账号'),
               actions: <Widget>[
-                SizedBox(
-                  width: 70,
-                  child: FlatButton(
-                    textColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50)),
-                    child: Text("保存"),
-                    onPressed: () {},
-                  ),
+                IconButton(
+                  icon: Icon(Icons.save),
+                  onPressed: () {},
                 ),
               ]),
           body: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(16),
                 child: Table(
                   columnWidths: const {
                     0: FlexColumnWidth(1.0),
@@ -81,39 +75,62 @@ class _MyAccountActionState extends State<AccountAction> {
                   children: _buildTableRow(),
                 ),
               ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                      child: FlatButton(
-                        textColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50)),
-                        child: Text("保存"),
-                        onPressed: () {},
-                      )
-                  ),
-                  Expanded(
-                    flex: 1,
-                      child: FlatButton(
-                        textColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50)),
-                        child: Text("保存"),
-                        onPressed: () {},
-                      )
-                  ),
-                  Expanded(
-                    flex: 1,
-                      child: FlatButton(
-                        textColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50)),
-                        child: Text("保存"),
-                        onPressed: () {},
-                      )
-                  )
-                ],
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                        flex: 1,
+                        child: FlatButton(
+                          shape: const Border(
+                              left: BorderSide(color: Colors.grey, width: 0.5),
+                              bottom:
+                                  BorderSide(color: Colors.grey, width: 0.5),
+                              top: BorderSide(color: Colors.grey, width: 0.5)),
+                          padding: const EdgeInsets.only(top: 12, bottom: 12),
+                          child: Text(
+                            "随机密码",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          onPressed: () {},
+                        )),
+                    Expanded(
+                        flex: 1,
+                        child: FlatButton(
+                          padding: const EdgeInsets.only(top: 12, bottom: 12),
+                          shape: const Border(
+                              left: BorderSide(color: Colors.grey, width: 0.5),
+                              bottom:
+                                  BorderSide(color: Colors.grey, width: 0.5),
+                              top: BorderSide(color: Colors.grey, width: 0.5)),
+                          child: Text(
+                            "调整顺序",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          onPressed: () {},
+                        )),
+                    Expanded(
+                        flex: 1,
+                        child: FlatButton(
+                          padding: const EdgeInsets.only(top: 12, bottom: 12),
+                          shape: const Border(
+                              left: BorderSide(color: Colors.grey, width: 0.5),
+                              bottom:
+                                  BorderSide(color: Colors.grey, width: 0.5),
+                              top: BorderSide(color: Colors.grey, width: 0.5),
+                              right:
+                                  BorderSide(color: Colors.grey, width: 0.5)),
+                          child: Text(
+                            "添加项目",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          onPressed: () {},
+                        ))
+                  ],
+                ),
               )
             ],
           ),
@@ -139,7 +156,7 @@ class _MyAccountActionState extends State<AccountAction> {
                 maxLength: 12,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                 ),
                 controller: _accountFields[index][0],
                 decoration: InputDecoration(
@@ -159,7 +176,7 @@ class _MyAccountActionState extends State<AccountAction> {
                       autofocus: _accountFields[index][1].text.length == 0,
                       maxLines: 4,
                       minLines: 1,
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 16),
                       controller: _accountFields[index][1],
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.only(
