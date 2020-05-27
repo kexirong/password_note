@@ -91,7 +91,7 @@ class _MyAccountActionState extends State<AccountAction> {
                           child: Text(
                             "随机密码",
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 16),
                           ),
                           onPressed: () {},
                         )),
@@ -107,7 +107,7 @@ class _MyAccountActionState extends State<AccountAction> {
                           child: Text(
                             "调整顺序",
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 16),
                           ),
                           onPressed: () {},
                         )),
@@ -115,7 +115,7 @@ class _MyAccountActionState extends State<AccountAction> {
                         flex: 1,
                         child: FlatButton(
                           padding: const EdgeInsets.only(top: 12, bottom: 12),
-                          shape: const Border(
+                          shape: const  Border(
                               left: BorderSide(color: Colors.grey, width: 0.5),
                               bottom:
                                   BorderSide(color: Colors.grey, width: 0.5),
@@ -125,7 +125,7 @@ class _MyAccountActionState extends State<AccountAction> {
                           child: Text(
                             "添加项目",
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 16),
                           ),
                           onPressed: () {},
                         ))
