@@ -121,7 +121,7 @@ class NoteGroup {
 }
 
 class NoteAccount {
-  String id, name, account;
+  String id, name, account, password;
   int createdAt, updatedAt;
   Map<String, String> extendField;
 
@@ -137,11 +137,17 @@ class NoteAccount {
   NoteAccount.fromJson(Map<String, dynamic> json)
       : name = json['name'],
         account = json['account'],
+        password = json['password'],
         createdAt = json['created_at'],
         updatedAt = json['updated_at'],
         extendField = <String, String>{} {
-    json.removeWhere((key, value) =>
-        ['name', 'account', 'created_at', 'updated_at'].contains(key));
+    json.removeWhere((key, value) => [
+          'name',
+          'account',
+          'password',
+          'created_at',
+          'updated_at'
+        ].contains(key));
     extendField.addAll(json);
   }
 

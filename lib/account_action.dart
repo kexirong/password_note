@@ -36,7 +36,12 @@ class _MyAccountActionState extends State<AccountAction> {
         TextEditingController(text: widget.account.account),
       ],
     );
-
+    _accountFields.add(
+      [
+        TextEditingController(text: '密码'),
+        TextEditingController(text: widget.account.password),
+      ],
+    );
     widget.account.extendField.forEach((k, v) {
       _accountFields.add(
         [
@@ -45,6 +50,17 @@ class _MyAccountActionState extends State<AccountAction> {
         ],
       );
     });
+  }
+
+  void _addItem() {
+    setState(
+      () => _accountFields.add(
+        [
+          TextEditingController(text: '新增'),
+          TextEditingController(text: widget.account.account),
+        ],
+      ),
+    );
   }
 
   @override
@@ -105,7 +121,7 @@ class _MyAccountActionState extends State<AccountAction> {
                                   BorderSide(color: Colors.grey, width: 0.5),
                               top: BorderSide(color: Colors.grey, width: 0.5)),
                           child: Text(
-                            "调整顺序",
+                            "清空所有",
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 16),
                           ),
@@ -115,7 +131,7 @@ class _MyAccountActionState extends State<AccountAction> {
                         flex: 1,
                         child: FlatButton(
                           padding: const EdgeInsets.only(top: 12, bottom: 12),
-                          shape: const  Border(
+                          shape: const Border(
                               left: BorderSide(color: Colors.grey, width: 0.5),
                               bottom:
                                   BorderSide(color: Colors.grey, width: 0.5),
@@ -123,11 +139,13 @@ class _MyAccountActionState extends State<AccountAction> {
                               right:
                                   BorderSide(color: Colors.grey, width: 0.5)),
                           child: Text(
-                            "添加项目",
+                            "添加条目",
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 16),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            _addItem();
+                          },
                         ))
                   ],
                 ),
@@ -143,6 +161,11 @@ class _MyAccountActionState extends State<AccountAction> {
   }
 
   List<TableRow> _buildTableRow() {
+    var pp = (int x, bool y) {
+      print('$x: $y');
+      return y;
+    };
+
     var rows = <TableRow>[];
     for (var index = 0; index < _accountFields.length; index++) {
       rows.add(
@@ -151,8 +174,9 @@ class _MyAccountActionState extends State<AccountAction> {
             TableCell(
               verticalAlignment: TableCellVerticalAlignment.middle,
               child: TextField(
-                enabled: index > 1,
-                autofocus: _accountFields[index][0].text.length == 0,
+                enabled: index > 2,
+                autofocus: pp(0, _accountFields[index][0].text == '新增') &&
+                    _accountFields[index][0].text == '新增',
                 maxLength: 12,
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -161,7 +185,7 @@ class _MyAccountActionState extends State<AccountAction> {
                 controller: _accountFields[index][0],
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.only(
-                      left: 8, right: 8, top: 16, bottom: 16),
+                      left: 8, right: 8, top: 12, bottom: 12),
                   border: InputBorder.none,
                   counterText: '',
                 ),
@@ -173,14 +197,16 @@ class _MyAccountActionState extends State<AccountAction> {
                   Expanded(
                     flex: 5,
                     child: TextField(
-                      autofocus: _accountFields[index][1].text.length == 0,
+                      autofocus:
+                          pp(1, _accountFields[index][1].text.length == 0) &&
+                              _accountFields[index][1].text.length == 0,
                       maxLines: 4,
                       minLines: 1,
                       style: TextStyle(fontSize: 16),
                       controller: _accountFields[index][1],
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.only(
-                            left: 8, right: 0, top: 16, bottom: 16),
+                            left: 8, right: 0, top: 12, bottom: 12),
                         border: InputBorder.none,
                         counterText: '',
                       ),
