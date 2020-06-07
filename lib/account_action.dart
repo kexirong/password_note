@@ -57,7 +57,7 @@ class _MyAccountActionState extends State<AccountAction> {
       () => _accountFields.add(
         [
           TextEditingController(text: '新增'),
-          TextEditingController(text: widget.account.account),
+          TextEditingController(text: ''),
         ],
       ),
     );
@@ -161,11 +161,6 @@ class _MyAccountActionState extends State<AccountAction> {
   }
 
   List<TableRow> _buildTableRow() {
-    var pp = (int x, bool y) {
-      print('$x: $y');
-      return y;
-    };
-
     var rows = <TableRow>[];
     for (var index = 0; index < _accountFields.length; index++) {
       rows.add(
@@ -175,8 +170,7 @@ class _MyAccountActionState extends State<AccountAction> {
               verticalAlignment: TableCellVerticalAlignment.middle,
               child: TextField(
                 enabled: index > 2,
-                autofocus: pp(0, _accountFields[index][0].text == '新增') &&
-                    _accountFields[index][0].text == '新增',
+                autofocus: _accountFields[index][0].text == '新增',
                 maxLength: 12,
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -197,9 +191,7 @@ class _MyAccountActionState extends State<AccountAction> {
                   Expanded(
                     flex: 5,
                     child: TextField(
-                      autofocus:
-                          pp(1, _accountFields[index][1].text.length == 0) &&
-                              _accountFields[index][1].text.length == 0,
+                      autofocus: _accountFields[index][1].text.length == 0,
                       maxLines: 4,
                       minLines: 1,
                       style: TextStyle(fontSize: 16),
@@ -214,11 +206,24 @@ class _MyAccountActionState extends State<AccountAction> {
                   ),
                   Expanded(
                     flex: 1,
-                    child: Icon(
-                      Icons.highlight_off,
-                      size: 20,
-                      color: Colors.grey,
-                    ),
+                    child: IconButton(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        padding: EdgeInsets.all(0),
+                        icon: Icon(
+                          Icons.highlight_off,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          if (_accountFields[index][1].text != '') {
+                            _accountFields[index][1].text = '';
+                          } else if (index > 2) {
+                            setState(() {
+                              _accountFields.removeAt(index);
+                            });
+                          }
+                        }),
                   )
                 ],
               ),
