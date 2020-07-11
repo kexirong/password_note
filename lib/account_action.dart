@@ -1,4 +1,7 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:toast/toast.dart';
 import 'note_data.dart';
 
 enum _Action { add, edit }
@@ -75,82 +78,89 @@ class _MyAccountActionState extends State<AccountAction> {
                   onPressed: () {},
                 ),
               ]),
-          body: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Table(
-                  columnWidths: const {
-                    0: FlexColumnWidth(1.0),
-                    1: FlexColumnWidth(2.5),
-                  },
-                  border: TableBorder.all(
-                    color: Colors.grey,
-                    width: 0.5,
+          body: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Table(
+                    columnWidths: const {
+                      0: FlexColumnWidth(1.0),
+                      1: FlexColumnWidth(2.5),
+                    },
+                    border: TableBorder.all(
+                      color: Colors.grey,
+                      width: 0.5,
+                    ),
+                    children: _buildTableRow(),
                   ),
-                  children: _buildTableRow(),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                        flex: 1,
-                        child: FlatButton(
-                          shape: const Border(
-                              left: BorderSide(color: Colors.grey, width: 0.5),
-                              bottom:
-                                  BorderSide(color: Colors.grey, width: 0.5),
-                              top: BorderSide(color: Colors.grey, width: 0.5)),
-                          padding: const EdgeInsets.only(top: 12, bottom: 12),
-                          child: Text(
-                            "随机密码",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          onPressed: () {},
-                        )),
-                    Expanded(
-                        flex: 1,
-                        child: FlatButton(
-                          padding: const EdgeInsets.only(top: 12, bottom: 12),
-                          shape: const Border(
-                              left: BorderSide(color: Colors.grey, width: 0.5),
-                              bottom:
-                                  BorderSide(color: Colors.grey, width: 0.5),
-                              top: BorderSide(color: Colors.grey, width: 0.5)),
-                          child: Text(
-                            "清空所有",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          onPressed: () {},
-                        )),
-                    Expanded(
-                        flex: 1,
-                        child: FlatButton(
-                          padding: const EdgeInsets.only(top: 12, bottom: 12),
-                          shape: const Border(
-                              left: BorderSide(color: Colors.grey, width: 0.5),
-                              bottom:
-                                  BorderSide(color: Colors.grey, width: 0.5),
-                              top: BorderSide(color: Colors.grey, width: 0.5),
-                              right:
-                                  BorderSide(color: Colors.grey, width: 0.5)),
-                          child: Text(
-                            "添加条目",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          onPressed: () {
-                            _addItem();
-                          },
-                        ))
-                  ],
-                ),
-              )
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                          flex: 1,
+                          child: FlatButton(
+                            shape: const Border(
+                                left:
+                                    BorderSide(color: Colors.grey, width: 0.5),
+                                bottom:
+                                    BorderSide(color: Colors.grey, width: 0.5),
+                                top:
+                                    BorderSide(color: Colors.grey, width: 0.5)),
+                            padding: const EdgeInsets.only(top: 12, bottom: 12),
+                            child: Text(
+                              "随机密码",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            onPressed: rndPassword,
+                          )),
+                      Expanded(
+                          flex: 1,
+                          child: FlatButton(
+                            padding: const EdgeInsets.only(top: 12, bottom: 12),
+                            shape: const Border(
+                                left:
+                                    BorderSide(color: Colors.grey, width: 0.5),
+                                bottom:
+                                    BorderSide(color: Colors.grey, width: 0.5),
+                                top:
+                                    BorderSide(color: Colors.grey, width: 0.5)),
+                            child: Text(
+                              "清空所有",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            onPressed: () {},
+                          )),
+                      Expanded(
+                          flex: 1,
+                          child: FlatButton(
+                            padding: const EdgeInsets.only(top: 12, bottom: 12),
+                            shape: const Border(
+                                left:
+                                    BorderSide(color: Colors.grey, width: 0.5),
+                                bottom:
+                                    BorderSide(color: Colors.grey, width: 0.5),
+                                top: BorderSide(color: Colors.grey, width: 0.5),
+                                right:
+                                    BorderSide(color: Colors.grey, width: 0.5)),
+                            child: Text(
+                              "添加条目",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            onPressed: () {
+                              _addItem();
+                            },
+                          ))
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
         onWillPop: () {
@@ -233,5 +243,133 @@ class _MyAccountActionState extends State<AccountAction> {
       );
     }
     return rows;
+  }
+
+  Future<void> rndPassword() async {
+    double slider = 8;
+
+    bool capital = true;
+    bool lowercase = true;
+    bool punctuation = false;
+    FocusScope.of(context).requestFocus(FocusNode());
+    String gen() {
+      //重复一次, 增大数字出现概率
+      String chars = '01234567890123456789';
+      if (capital) {
+        chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      }
+      if (lowercase) {
+        chars += 'abcdefghijklmnopqrstuvwxyz';
+      }
+      if (punctuation) {
+        chars += '!"#\$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
+      }
+      var _rnd = Random();
+      return String.fromCharCodes(
+        Iterable.generate(slider.truncate(),
+            (_) => chars.codeUnitAt(_rnd.nextInt(chars.length))),
+      );
+    }
+
+    String password = gen();
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0),
+          actionsPadding: const EdgeInsets.fromLTRB(0, 0, 24, 0),
+          title: Text(
+            '生成随机密码 [ ${slider.truncate()} ]',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text('$password'),
+              Slider(
+                value: slider,
+                max: 16.0,
+                min: 6.0,
+                onChanged: (double val) {
+                  slider = val.roundToDouble();
+                  (context as Element).markNeedsBuild();
+                },
+                onChangeEnd: (double val) {
+                  password = gen();
+                  (context as Element).markNeedsBuild();
+                },
+              ),
+              Row(
+                children: <Widget>[
+                  Checkbox(
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    value: capital,
+                    onChanged: (bool value) {
+                      capital = !capital;
+                      password = gen();
+                      (context as Element).markNeedsBuild();
+                    },
+                  ),
+                  Text("包含大写字母"),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Checkbox(
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    value: lowercase,
+                    onChanged: (bool value) {
+                      lowercase = !lowercase;
+                      password = gen();
+                      (context as Element).markNeedsBuild();
+                    },
+                  ),
+                  Text("包含小写字母"),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Checkbox(
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    value: punctuation,
+                    onChanged: (bool value) {
+                      punctuation = !punctuation;
+                      password = gen();
+                      (context as Element).markNeedsBuild();
+                    },
+                  ),
+                  Text("包含特殊符号"),
+                ],
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("取消"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            FlatButton(
+              child: Text("刷新"),
+              onPressed: () {
+                password = gen();
+                (context as Element).markNeedsBuild();
+              },
+            ),
+            FlatButton(
+              child: Text("复制密码"),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: password));
+                Toast.show("已复制到剪贴板", context, gravity: Toast.BOTTOM);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

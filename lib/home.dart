@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 import 'note_data.dart';
 import 'account_action.dart';
 
@@ -26,12 +27,9 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() => noteData.addGroup(NoteGroup(name: name)));
   }
 
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
@@ -39,10 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: Icon(Icons.add),
               onPressed: () async {
                 if (noteData.length == 0) {
-                  _scaffoldKey.currentState.showSnackBar(SnackBar(
-                    content: Text('无分组，先创建分组'),
-                    duration: Duration(seconds: 1),
-                  ));
+                  Toast.show("无分组，先创建分组", context, gravity: Toast.CENTER);
                   addGroup();
                 } else {
                   var result = await Navigator.push(context,
