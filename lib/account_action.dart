@@ -20,6 +20,8 @@ class AccountAction extends StatefulWidget {
 class _MyAccountActionState extends State<AccountAction> {
   _MyAccountActionState();
 
+  bool _saved;
+
   List<List<TextEditingController>> _accountFields;
 
   @override
@@ -75,7 +77,10 @@ class _MyAccountActionState extends State<AccountAction> {
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.save),
-                  onPressed: () {},
+                  onPressed: () {
+                    save();
+                    Toast.show("已保存", context, gravity: Toast.TOP);
+                  },
                 ),
               ]),
           body: SingleChildScrollView(
@@ -154,6 +159,7 @@ class _MyAccountActionState extends State<AccountAction> {
                             ),
                             onPressed: () {
                               _addItem();
+                              _saved = false;
                             },
                           ))
                     ],
@@ -164,8 +170,18 @@ class _MyAccountActionState extends State<AccountAction> {
           ),
         ),
         onWillPop: () {
-          print("返回键点击了");
-          Navigator.pop(context, 'none');
+          switch (_saved) {
+            case true:
+              Navigator.pop(context, widget.account);
+              break;
+            case false:
+              print("未保存");
+              continue pop;
+            pop:
+            default:
+              Navigator.pop(context);
+              print("返回键点击了");
+          }
           return Future.value(false);
         });
   }
@@ -193,6 +209,7 @@ class _MyAccountActionState extends State<AccountAction> {
                   border: InputBorder.none,
                   counterText: '',
                 ),
+                onChanged: (_) => _saved = false,
               ),
             ),
             TableCell(
@@ -212,6 +229,7 @@ class _MyAccountActionState extends State<AccountAction> {
                         border: InputBorder.none,
                         counterText: '',
                       ),
+                      onChanged: (_) => _saved = false,
                     ),
                   ),
                   Expanded(
@@ -251,7 +269,6 @@ class _MyAccountActionState extends State<AccountAction> {
     bool capital = true;
     bool lowercase = true;
     bool punctuation = false;
-    FocusScope.of(context).requestFocus(FocusNode());
     String gen() {
       //重复一次, 增大数字出现概率
       String chars = '01234567890123456789';
@@ -276,13 +293,25 @@ class _MyAccountActionState extends State<AccountAction> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0),
-          actionsPadding: const EdgeInsets.fromLTRB(0, 0, 24, 0),
-          title: Text(
-            '生成随机密码 [ ${slider.truncate()} ]',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.normal,
+          contentPadding: const EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 0),
+          actionsPadding: const EdgeInsets.only(right: 24),
+          title: Text.rich(
+            new TextSpan(
+              text: '生成随机密码',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.normal,
+              ),
+              children: <TextSpan>[
+                new TextSpan(
+                  text: ' [${slider.truncate()}]',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 18,
+                    fontWeight: FontWeight.normal,
+                  ),
+                )
+              ],
             ),
           ),
           content: Column(
@@ -309,7 +338,7 @@ class _MyAccountActionState extends State<AccountAction> {
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     value: capital,
                     onChanged: (bool value) {
-                      capital = !capital;
+                      capital = value;
                       password = gen();
                       (context as Element).markNeedsBuild();
                     },
@@ -323,7 +352,7 @@ class _MyAccountActionState extends State<AccountAction> {
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     value: lowercase,
                     onChanged: (bool value) {
-                      lowercase = !lowercase;
+                      lowercase = value;
                       password = gen();
                       (context as Element).markNeedsBuild();
                     },
@@ -337,7 +366,7 @@ class _MyAccountActionState extends State<AccountAction> {
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     value: punctuation,
                     onChanged: (bool value) {
-                      punctuation = !punctuation;
+                      punctuation = value;
                       password = gen();
                       (context as Element).markNeedsBuild();
                     },
@@ -371,5 +400,24 @@ class _MyAccountActionState extends State<AccountAction> {
         );
       },
     );
+  }
+
+  void save() {
+    _accountFields.forEach((element) {
+      switch (element[0].text) {
+        case '名称':
+          widget.account.name = element[1].text;
+          break;
+        case '账号':
+          widget.account.account = element[1].text;
+          break;
+        case '密码':
+          widget.account.password = element[1].text;
+          break;
+        default:
+          widget.account.extendField[element[0].text] = element[1].text;
+      }
+    });
+    _saved = true;
   }
 }

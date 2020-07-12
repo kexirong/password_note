@@ -27,6 +27,10 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() => noteData.addGroup(NoteGroup(name: name)));
   }
 
+  void _addAccount(NoteAccount acct) {
+    setState(() => noteData.getGroupAt(_index).addAccount(acct));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,11 +44,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   Toast.show("无分组，先创建分组", context, gravity: Toast.CENTER);
                   addGroup();
                 } else {
-                  var result = await Navigator.push(context,
-                      MaterialPageRoute(builder: (context) {
-                    return AccountAction(NoteAccount());
-                  }));
-                  print(result);
+                  var result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return AccountAction(NoteAccount());
+                    }),
+                  );
+
+                  if (result is NoteAccount) {
+                    print(result);
+                    _addAccount(result);
+                  }
                 }
               }),
           IconButton(icon: Icon(Icons.search), onPressed: () {}),
@@ -180,8 +190,12 @@ class _MyHomePageState extends State<MyHomePage> {
               FlatButton(
                 child: Text("确认"),
                 onPressed: () {
-                  _addGroup(_gNameController.text);
-                  Navigator.pop(context);
+                  if (_gNameController.text.trim().length > 0) {
+                    _addGroup(_gNameController.text);
+                    Navigator.pop(context);
+                  } else {
+                    Toast.show("分组名不能为空", context, gravity: Toast.TOP);
+                  }
                 },
               ),
             ],

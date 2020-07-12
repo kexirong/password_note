@@ -34,11 +34,11 @@ class NoteData {
   }
 
   NoteGroup getGroupAt(int index) {
-    return index >= 0 && length > index ? _dataEntry.groups[index] : null;
+    return length > 0 && length > index ? _dataEntry.groups[index] : null;
   }
 
   List<NoteAccount> getAccountsAt(int index) {
-    return index > 0 && length > index
+    return length > 0 && length > index
         ? _dataEntry.groups[index].accounts
         : null;
   }
