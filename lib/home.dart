@@ -119,20 +119,28 @@ class _MyHomePageState extends State<MyHomePage> {
             flex: 3,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+//                color: Colors.white,
                 border: Border(
                     right: BorderSide(color: Colors.grey[300], width: 0.5)),
               ),
-              child: ListView.separated(
-                padding:
-                    const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0),
+              child: ListView.builder(
                 itemCount: noteData.getAccountsAt(_index)?.length ?? 0,
                 itemBuilder: (BuildContext context, int index) {
                   final noteAccount = noteData.getAccountsAt(_index)[index];
-                  return Padding(
-                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  return InkWell(
+                    onTap: () async {
+                      print(noteAccount.name);
+                      await showAccountDetail(noteAccount);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(
+                        width: 1,
+                        color: Colors.grey[200],
+                      ))),
                       child: Row(
-//                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Expanded(
                             flex: 1,
@@ -150,12 +158,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                         ],
-                      ));
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return Divider(
-                    thickness: 0.2,
-                    color: Colors.grey,
+                      ),
+                    ),
                   );
                 },
               ),
@@ -201,5 +205,33 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           );
         });
+  }
+
+  Future<bool> showAccountDetail(NoteAccount account) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+            contentPadding:const EdgeInsets.all( 16.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(flex: 4, child: Text(account.name)),
+                  Expanded(
+                      flex: 1,
+                      child: FlatButton(
+                        textColor: Theme.of(context).primaryColor,
+                        child: Text("编辑"),
+                        onPressed: () {print('d');}, // 关闭对话框
+                      ))
+                ],
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 }

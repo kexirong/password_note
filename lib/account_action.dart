@@ -17,55 +17,63 @@ class AccountAction extends StatefulWidget {
   _MyAccountActionState createState() => _MyAccountActionState();
 }
 
+class TextEditingHelper {
+  List<FocusNode> nodes;
+  List<TextEditingController> controllers;
+
+  TextEditingHelper(int length) {
+    this.nodes = List(length);
+    this.controllers = List(length);
+    for (int i = 0; i < length; i++) {
+      this.nodes[i] = FocusNode();
+    }
+  }
+}
+
 class _MyAccountActionState extends State<AccountAction> {
   _MyAccountActionState();
 
-  bool _saved;
+  bool _saved = true;
 
-  List<List<TextEditingController>> _accountFields;
+  List<TextEditingHelper> _accountFields;
 
   @override
   void initState() {
     super.initState();
 
-    _accountFields = <List<TextEditingController>>[];
-    _accountFields.add(
-      [
-        TextEditingController(text: '名称'),
-        TextEditingController(text: widget.account.name),
-      ],
-    );
-    _accountFields.add(
-      [
-        TextEditingController(text: '账号'),
-        TextEditingController(text: widget.account.account),
-      ],
-    );
-    _accountFields.add(
-      [
-        TextEditingController(text: '密码'),
-        TextEditingController(text: widget.account.password),
-      ],
-    );
+    _accountFields = <TextEditingHelper>[];
+
+    TextEditingHelper helper = TextEditingHelper(2);
+    helper.controllers[0] = TextEditingController(text: '名称');
+    helper.controllers[1] = TextEditingController(text: widget.account.name);
+    _accountFields.add(helper);
+
+    helper = TextEditingHelper(2);
+    helper.controllers[0] = TextEditingController(text: '账号');
+    helper.controllers[1] = TextEditingController(text: widget.account.account);
+    _accountFields.add(helper);
+
+    helper = TextEditingHelper(2);
+    helper.controllers[0] = TextEditingController(text: '密码');
+    helper.controllers[1] =
+        TextEditingController(text: widget.account.password);
+    _accountFields.add(helper);
+
     widget.account.extendField.forEach((k, v) {
-      _accountFields.add(
-        [
-          TextEditingController(text: k),
-          TextEditingController(text: v),
-        ],
-      );
+      helper = TextEditingHelper(2);
+      helper.controllers[0] = TextEditingController(text: k);
+      helper.controllers[1] = TextEditingController(text: v);
+      _accountFields.add(helper);
     });
   }
 
   void _addItem() {
-    setState(
-      () => _accountFields.add(
-        [
-          TextEditingController(text: '新增'),
-          TextEditingController(text: ''),
-        ],
-      ),
-    );
+    setState(() {
+      TextEditingHelper helper = TextEditingHelper(2);
+      helper.controllers[0] = TextEditingController(text: '');
+      helper.controllers[1] = TextEditingController(text: '');
+      _accountFields.add(helper);
+    });
   }
 
   @override
@@ -78,8 +86,12 @@ class _MyAccountActionState extends State<AccountAction> {
                 IconButton(
                   icon: Icon(Icons.save),
                   onPressed: () {
-                    save();
-                    Toast.show("已保存", context, gravity: Toast.TOP);
+                    if (!save()) {
+                      return;
+                    }
+
+                    Toast.show("已保存", context, gravity: Toast.CENTER);
+                    Navigator.pop(context, widget.account);
                   },
                 ),
               ]),
@@ -169,18 +181,15 @@ class _MyAccountActionState extends State<AccountAction> {
             ),
           ),
         ),
-        onWillPop: () {
-          switch (_saved) {
-            case true:
-              Navigator.pop(context, widget.account);
-              break;
-            case false:
-              print("未保存");
-              continue pop;
-            pop:
-            default:
-              Navigator.pop(context);
-              print("返回键点击了");
+        onWillPop: () async {
+          bool confirm = false;
+          if (!_saved) {
+            confirm = await showReturnConfirm();
+          }
+
+          if (_saved || confirm) {
+            Navigator.pop(context);
+            return Future.value(true);
           }
           return Future.value(false);
         });
@@ -188,6 +197,7 @@ class _MyAccountActionState extends State<AccountAction> {
 
   List<TableRow> _buildTableRow() {
     var rows = <TableRow>[];
+
     for (var index = 0; index < _accountFields.length; index++) {
       rows.add(
         TableRow(
@@ -196,13 +206,14 @@ class _MyAccountActionState extends State<AccountAction> {
               verticalAlignment: TableCellVerticalAlignment.middle,
               child: TextField(
                 enabled: index > 2,
-                autofocus: _accountFields[index][0].text == '新增',
+//                autofocus: _accountFields[index][0].text == '新增',
+                focusNode: _accountFields[index].nodes[0],
                 maxLength: 12,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
                 ),
-                controller: _accountFields[index][0],
+                controller: _accountFields[index].controllers[0],
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.only(
                       left: 8, right: 8, top: 12, bottom: 12),
@@ -218,11 +229,13 @@ class _MyAccountActionState extends State<AccountAction> {
                   Expanded(
                     flex: 5,
                     child: TextField(
-                      autofocus: _accountFields[index][1].text.length == 0,
+                      autofocus:
+                          _accountFields[index].controllers[1].text.length == 0,
+                      focusNode: _accountFields[index].nodes[1],
                       maxLines: 4,
                       minLines: 1,
                       style: TextStyle(fontSize: 16),
-                      controller: _accountFields[index][1],
+                      controller: _accountFields[index].controllers[1],
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.only(
                             left: 8, right: 0, top: 12, bottom: 12),
@@ -244,8 +257,8 @@ class _MyAccountActionState extends State<AccountAction> {
                           color: Colors.grey,
                         ),
                         onPressed: () {
-                          if (_accountFields[index][1].text != '') {
-                            _accountFields[index][1].text = '';
+                          if (_accountFields[index].controllers[1].text != '') {
+                            _accountFields[index].controllers[1].text = '';
                           } else if (index > 2) {
                             setState(() {
                               _accountFields.removeAt(index);
@@ -315,7 +328,6 @@ class _MyAccountActionState extends State<AccountAction> {
             ),
           ),
           content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text('$password'),
@@ -402,22 +414,61 @@ class _MyAccountActionState extends State<AccountAction> {
     );
   }
 
-  void save() {
-    _accountFields.forEach((element) {
-      switch (element[0].text) {
+  bool save() {
+    for (var element in _accountFields) {
+      var text0 = element.controllers[0].text.trim();
+      var text1 = element.controllers[1].text.trim();
+      if (text0.trim().length == 0) {
+        Toast.show("此字段不能为空", context, gravity: Toast.TOP);
+        FocusScope.of(context).requestFocus(element.nodes[0]);
+        return false;
+      }
+      if (text1.trim().length == 0) {
+        Toast.show("此字段不能为空", context, gravity: Toast.TOP);
+        FocusScope.of(context).requestFocus(element.nodes[1]);
+        return false;
+      }
+
+      switch (element.controllers[0].text) {
         case '名称':
-          widget.account.name = element[1].text;
+          widget.account.name = text1;
           break;
         case '账号':
-          widget.account.account = element[1].text;
+          widget.account.account = text1;
           break;
         case '密码':
-          widget.account.password = element[1].text;
+          widget.account.password = text1;
           break;
         default:
-          widget.account.extendField[element[0].text] = element[1].text;
+          widget.account.extendField[text0] = text1;
       }
-    });
-    _saved = true;
+    }
+
+    return _saved = true;
+  }
+
+  Future<bool> showReturnConfirm() {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+
+          title: Text("提示"),
+          content: Text("确认不保存退出?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("取消"),
+              onPressed: () => Navigator.of(context).pop(false), // 关闭对话框
+            ),
+            FlatButton(
+              child: Text("确认"),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
