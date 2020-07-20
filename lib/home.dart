@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   } else {
                     return InkWell(
                       child: Container(
-                        margin: const EdgeInsets.only(left: 8, right: 8),
+                        margin: const EdgeInsets.only(left: 12, right: 12),
                         padding: const EdgeInsets.only(top: 16, bottom: 16),
                         decoration: BoxDecoration(
                             border: Border(
@@ -131,11 +131,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   final noteAccount = noteData.getAccountsAt(_index)[index];
                   return InkWell(
                     onTap: () async {
-                      print(noteAccount.name);
                       await showAccountDetail(noteAccount);
                     },
                     child: Container(
-                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.only(left: 12, right: 12),
+                      padding: const EdgeInsets.only(top: 16, bottom: 16),
                       decoration: BoxDecoration(
                           border: Border(
                               bottom: BorderSide(
@@ -222,8 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
         fieldMap.forEach((String k, String v) {
           extend.add(Row(
             children: <Widget>[
-              Expanded(flex: 2, child: Text(k)),
-              Expanded(flex: 5, child: Text(v)),
+              Expanded(flex: 7, child: Text('$k: $v')),
               Expanded(
                 flex: 1,
                 child: IconButton(
@@ -261,14 +260,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   Expanded(
                       flex: 1,
                       child: FlatButton(
-                        padding:  const EdgeInsets.all(0),
+                        padding: const EdgeInsets.all(0),
                         textColor: Theme.of(context).primaryColor,
                         child: Text(
                           "编辑",
                           style: TextStyle(fontSize: 16),
                         ),
-                        onPressed: () {
-                          print('d');
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) {
+                              return AccountAction(account);
+                            }),
+                          );
                         },
                       ))
                 ],
