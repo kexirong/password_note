@@ -3,15 +3,13 @@ import 'dart:convert';
 import "package:flutter_test/flutter_test.dart";
 import "package:password_note/note_data.dart";
 
-import 'package:password_note/util.dart';
-
 void main() {
-  var test_groups = [
+  var testGroups = [
     {"type": ItemType.group.index, 'id': 'g1111', 'content': '{"name": "分组一"}'},
     {"type": ItemType.group.index, 'id': 'g2222', 'content': '{"name": "分组二"}'},
     {"type": ItemType.group.index, 'id': 'g3333', 'content': '{"name": "分组三"}'},
   ];
-  var test_accounts = [
+  var testAccounts = [
     {
       "type": ItemType.account.index,
       "id": "a111",
@@ -66,11 +64,12 @@ void main() {
       'content': '"name": "ccc1", "account": "12321", "pass": "123312"}'
     },
   ];
+  assert(testAccounts.length > 0);
   test("NoteData", () {
     final noteData = NoteData();
     print(noteData.id);
     NoteGroup group;
-    for (var e in test_groups) {
+    for (var e in testGroups) {
       Map groupMap = json.decode(e['content']);
       group = NoteGroup.fromJson(groupMap);
       print(group.name);

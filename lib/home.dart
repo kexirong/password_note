@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:toast/toast.dart';
+
 import 'note_data.dart';
 import 'account_action.dart';
 
@@ -211,23 +213,67 @@ class _MyHomePageState extends State<MyHomePage> {
     return showDialog<bool>(
       context: context,
       builder: (context) {
+        var fieldMap = <String, String>{
+          '账号': account.account,
+          '密码': account.password
+        }..addAll(account.extendField);
+
+        var extend = <Widget>[];
+        fieldMap.forEach((String k, String v) {
+          extend.add(Row(
+            children: <Widget>[
+              Expanded(flex: 2, child: Text(k)),
+              Expanded(flex: 5, child: Text(v)),
+              Expanded(
+                flex: 1,
+                child: IconButton(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  padding: EdgeInsets.all(0),
+                  icon: Icon(
+                    Icons.content_copy,
+                    size: 20,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: v));
+                    Toast.show("已复制到剪贴板", context, gravity: Toast.BOTTOM);
+                  },
+                ),
+              )
+            ],
+          ));
+        });
+
         return AlertDialog(
-            contentPadding:const EdgeInsets.all( 16.0),
+          contentPadding: const EdgeInsets.all(16.0),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Expanded(flex: 4, child: Text(account.name)),
+                  Expanded(
+                      flex: 3,
+                      child: Text(
+                        account.name,
+                        style: TextStyle(fontSize: 22),
+                      )),
                   Expanded(
                       flex: 1,
                       child: FlatButton(
+                        padding:  const EdgeInsets.all(0),
                         textColor: Theme.of(context).primaryColor,
-                        child: Text("编辑"),
-                        onPressed: () {print('d');}, // 关闭对话框
+                        child: Text(
+                          "编辑",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        onPressed: () {
+                          print('d');
+                        },
                       ))
                 ],
-              )
+              ),
+              ...extend,
             ],
           ),
         );

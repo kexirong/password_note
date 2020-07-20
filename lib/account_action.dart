@@ -248,23 +248,24 @@ class _MyAccountActionState extends State<AccountAction> {
                   Expanded(
                     flex: 1,
                     child: IconButton(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        padding: EdgeInsets.all(0),
-                        icon: Icon(
-                          Icons.highlight_off,
-                          size: 20,
-                          color: Colors.grey,
-                        ),
-                        onPressed: () {
-                          if (_accountFields[index].controllers[1].text != '') {
-                            _accountFields[index].controllers[1].text = '';
-                          } else if (index > 2) {
-                            setState(() {
-                              _accountFields.removeAt(index);
-                            });
-                          }
-                        }),
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      padding: EdgeInsets.all(0),
+                      icon: Icon(
+                        Icons.highlight_off,
+                        size: 20,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        if (_accountFields[index].controllers[1].text != '') {
+                          _accountFields[index].controllers[1].text = '';
+                        } else if (index > 2) {
+                          setState(() {
+                            _accountFields.removeAt(index);
+                          });
+                        }
+                      },
+                    ),
                   )
                 ],
               ),
@@ -452,7 +453,6 @@ class _MyAccountActionState extends State<AccountAction> {
       context: context,
       builder: (context) {
         return AlertDialog(
-
           title: Text("提示"),
           content: Text("确认不保存退出?"),
           actions: <Widget>[
