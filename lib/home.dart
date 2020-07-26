@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () async {
                 if (noteData.length == 0) {
                   Toast.show("无分组，先创建分组", context, gravity: Toast.CENTER);
-                  addGroup();
+                  addGroup(true);
                 } else {
                   var result = await Navigator.push(
                     context,
@@ -54,7 +54,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   );
 
                   if (result is NoteAccount) {
-                    print(result);
                     _addAccount(result);
                   }
                 }
@@ -83,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Icons.add,
                         color: Colors.black54,
                       ),
-                      onPressed: addGroup,
+                      onPressed: () => addGroup(true),
                     );
                   } else {
                     return InkWell(
@@ -172,14 +171,14 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void addGroup() async {
+  void addGroup(bool add) async {
     await showDialog<bool>(
         context: context,
         builder: (context) {
           TextEditingController _gNameController = TextEditingController();
 
           return AlertDialog(
-            title: Text("添加分组"),
+            title: Text(add ? "添加分组" : '重命名'),
             content: TextField(
               autofocus: true,
               maxLength: 6,
@@ -268,12 +267,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         onPressed: () async {
                           Navigator.pop(context);
-                          await Navigator.push(
+                          var result = await Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) {
                               return AccountAction(account);
                             }),
                           );
+                          if (result is NoteAccount) {
+                            setState(() => {account = result});
+                          }
                         },
                       ))
                 ],
@@ -284,5 +286,40 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
     );
+  }
+
+  Future<void> groupOption(NoteGroup noteGroup) async {
+    int i = await showDialog<int>(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            children: <Widget>[
+              SimpleDialogOption(
+                onPressed: () {
+                  // 返回1
+                  Navigator.pop(context);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: const Text('重命名'),
+                ),
+              ),
+              SimpleDialogOption(
+                onPressed: () {
+                  // 返回2
+                  Navigator.pop(context, 2);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: const Text('删除'),
+                ),
+              ),
+            ],
+          );
+        });
+
+    if (i != null) {
+      print("选择了：${i == 1 ? "重命名" : "删除"}");
+    }
   }
 }
