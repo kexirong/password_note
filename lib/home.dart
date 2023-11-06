@@ -6,15 +6,15 @@ import 'note_data.dart';
 import 'account_action.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
 
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  MyHomePageState createState() => MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class MyHomePageState extends State<MyHomePage> {
   final NoteData noteData = NoteData();
 
   int _index = -1;
@@ -189,15 +189,15 @@ class _MyHomePageState extends State<MyHomePage> {
     await showDialog<bool>(
         context: context,
         builder: (context) {
-          TextEditingController _gNameController = TextEditingController();
-          _gNameController.text = noteGroup?.name ?? "";
+          TextEditingController gNameController = TextEditingController();
+          gNameController.text = noteGroup?.name ?? "";
 
           return AlertDialog(
             title: Text(add ? "添加分组" : '重命名'),
             content: TextField(
               autofocus: true,
               maxLength: 6,
-              controller: _gNameController,
+              controller: gNameController,
               decoration: const InputDecoration(
                 hintText: "分组名最多6个字符",
               ),
@@ -210,17 +210,17 @@ class _MyHomePageState extends State<MyHomePage> {
               TextButton(
                 child: const Text("确认"),
                 onPressed: () {
-                  if (_gNameController.text
+                  if (gNameController.text
                       .trim()
                       .isNotEmpty) {
                     if (noteGroup == null) {
                       setState(() {
-                        noteData.addGroup(NoteGroup(_gNameController.text));
+                        noteData.addGroup(NoteGroup(gNameController.text));
                         _index = noteData.groupsLength - 1;
                         });
                     } else {
                       setState(() {
-                        noteGroup.name = _gNameController.text;
+                        noteGroup.name = gNameController.text;
                         _index = noteData.groupIndexById(noteGroup.id);
                       });
                     }
@@ -290,7 +290,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       flex: 1,
                       child: TextButton(
                         style: TextButton.styleFrom(
-                            primary: Theme
+                            foregroundColor: Theme
                                 .of(context)
                                 .primaryColor),
                         child: const Text(
@@ -305,7 +305,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             }),
                           );
                           if (result is NoteAccount) {
-                            setState(() => {account = result});
+                            setState(() => account = result);
                           }
                         },
                       ))

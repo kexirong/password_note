@@ -1,7 +1,6 @@
 import 'package:sqlite3/common.dart' show CommonDatabase;
 import 'sqlite/sqlite3.dart' show openSqliteDb;
 
-import 'package:sqlite3/sqlite3.dart' show sqlite3;
 
 class DatabaseHelper {
   static const _databaseName = "note.db";
@@ -22,12 +21,13 @@ class DatabaseHelper {
   Future<CommonDatabase> get database async {
     if (_database != null) return _database!;
     // lazily instantiate the db the first time it is accessed
-    _database = await openSqliteDb(_databaseName);
+    _database = await openSqliteDb(_databaseName, onCreate: _onCreate);
     return _database!;
   }
 
   // SQL code to create the database table
-  Future<void> _onCreate(CommonDatabase db, int version) async {
+  void _onCreate(CommonDatabase db) {
+    db.select('');
     db.execute('''
           CREATE TABLE $table (
             $columnId INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -14,7 +14,7 @@ class AccountAction extends StatefulWidget {
   final _Action _action;
 
   @override
-  _MyAccountActionState createState() => _MyAccountActionState();
+  MyAccountActionState createState() => MyAccountActionState();
 }
 
 class TextEditingHelper {
@@ -26,8 +26,8 @@ class TextEditingHelper {
         controllers = List.filled(length, TextEditingController());
 }
 
-class _MyAccountActionState extends State<AccountAction> {
-  _MyAccountActionState();
+class MyAccountActionState extends State<AccountAction> {
+  MyAccountActionState();
 
   bool _saved = true;
 
