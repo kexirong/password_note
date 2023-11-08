@@ -1,19 +1,12 @@
-import 'package:sqlite3/common.dart' show CommonDatabase;
+import 'package:sqlite3/common.dart' show CommonDatabase, SqliteException;
 import 'sqlite/sqlite3.dart' show openSqliteDb;
-
 
 class DatabaseHelper {
   static const _databaseName = "note.db";
-  static const table = 'cars_table';
-
-  static const columnId = 'id';
-  static const columnName = 'name';
-  static const columnMiles = 'miles';
-
   // make this a singleton class
   DatabaseHelper._privateConstructor();
 
-  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+  static final DatabaseHelper _instance = DatabaseHelper._privateConstructor();
 
   // only have a single app-wide reference to the database
   CommonDatabase? _database;
@@ -25,16 +18,23 @@ class DatabaseHelper {
     return _database!;
   }
 
+  factory DatabaseHelper() {
+    return _instance;
+  }
   // SQL code to create the database table
   void _onCreate(CommonDatabase db) {
-    db.select('');
-    db.execute('''
-          CREATE TABLE $table (
-            $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
-            $columnName TEXT NOT NULL,
-            $columnMiles INTEGER NOT NULL
+    try {
+      db.execute('select 1 from note_group');
+    } on SqliteException {
+      db.execute('''
+          CREATE TABLE note_group (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            created_At TEXT NOT NULL,
+            updatedAt TEXT NOT NULL
           )
           ''');
+    }
   }
 
 //   // Helper methods

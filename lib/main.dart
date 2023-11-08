@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
+import 'persist.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  DatabaseHelper db = DatabaseHelper();
+  db.database;
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const _title = '密码本子';
+    const title = '密码本子';
     return MaterialApp(
-      title: _title,
+      title: title,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
         canvasColor: Colors.white,
       ),
-      home: const MyHomePage(title: _title),
+      home: const MyHomePage(title: title),
     );
   }
 }
-

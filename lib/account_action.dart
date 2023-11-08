@@ -7,9 +7,8 @@ import 'note_data.dart';
 enum _Action { add, edit }
 
 class AccountAction extends StatefulWidget {
-  AccountAction(this.account, {Key? key})
-      : _action = account.name.isEmpty ? _Action.add : _Action.edit,
-        super(key: key);
+  AccountAction(this.account, {super.key})
+      : _action = account.name.isEmpty ? _Action.add : _Action.edit;
   final NoteAccount account;
   final _Action _action;
 
