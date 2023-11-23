@@ -115,21 +115,20 @@ class MyAccountActionState extends State<AccountAction> {
                       Expanded(
                           flex: 1,
                           child: OutlinedButton(
-                            // shape: const Border(
-                            //     left:
-                            //         BorderSide(color: Colors.grey, width: 0.5),
-                            //     bottom:
-                            //         BorderSide(color: Colors.grey, width: 0.5),
-                            //     top:
-                            //         BorderSide(color: Colors.grey, width: 0.5)),
-                            // padding: const EdgeInsets.only(top: 12, bottom: 12),
-                            onPressed: rndPassword,
-                            child: const Text(
-                              "随机密码",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 16),
-                            )
-                          )),
+                              // shape: const Border(
+                              //     left:
+                              //         BorderSide(color: Colors.grey, width: 0.5),
+                              //     bottom:
+                              //         BorderSide(color: Colors.grey, width: 0.5),
+                              //     top:
+                              //         BorderSide(color: Colors.grey, width: 0.5)),
+                              // padding: const EdgeInsets.only(top: 12, bottom: 12),
+                              onPressed: rndPassword,
+                              child: const Text(
+                                "随机密码",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 16),
+                              ))),
                       Expanded(
                           flex: 1,
                           child: OutlinedButton(
@@ -186,7 +185,7 @@ class MyAccountActionState extends State<AccountAction> {
             confirm = await showReturnConfirm();
           }
 
-          if (_saved || confirm!) {
+          if ((_saved || confirm!) && context.mounted) {
             Navigator.pop(context);
             return Future.value(true);
           }
@@ -294,10 +293,10 @@ class MyAccountActionState extends State<AccountAction> {
       if (punctuation!) {
         chars += '!"#\$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
       }
-      var _rnd = Random();
+      var rnd = Random();
       return String.fromCharCodes(
         Iterable.generate(slider.truncate(),
-            (_) => chars.codeUnitAt(_rnd.nextInt(chars.length))),
+            (_) => chars.codeUnitAt(rnd.nextInt(chars.length))),
       );
     }
 

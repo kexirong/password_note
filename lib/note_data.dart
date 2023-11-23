@@ -32,6 +32,10 @@ class NoteData {
     groups.add(group);
   }
 
+  List<NoteAccount> getAccounts(String groupID) {
+    return accounts.where((element) => element.groupID == groupID).toList();
+  }
+
   NoteGroup groupAt(int index) {
     //return index > 0 && groups.length > index ? groups[index] : null;
     return groups.elementAt(index);
@@ -44,6 +48,11 @@ class NoteData {
 
   int groupIndexById(String id) {
     return groups.indexWhere((el) => (el.id == id));
+  }
+
+  NoteGroup deleteGroup(String groupID) {
+    int index = groupIndexById(groupID);
+    return groups.removeAt(index);
   }
 
   int accountIndexById(String id) {
@@ -83,15 +92,15 @@ class NoteGroup {
       : id = uuid(),
         createdAt = DateTime.now().millisecondsSinceEpoch;
 
-  int get accountsLength {
-    return accounts.length;
-  }
+  // int get accountsLength {
+  //   return accounts.length;
+  // }
 
-  List<NoteAccount> get accounts {
-    var data = NoteData();
-    return data.accounts.where((element) => element.groupID == id).toList();
-    // return <NoteAccount>[];
-  }
+  // List<NoteAccount> get accounts {
+  //   var data = NoteData();
+  //   return data.accounts.where((element) => element.groupID == id).toList();
+  //   // return <NoteAccount>[];
+  // }
 
   NoteGroup.fromJson(Map<String, dynamic> json)
       : id = json['id'],

@@ -32,8 +32,20 @@ class DatabaseHelper {
             name TEXT NOT NULL,
             created_At TEXT NOT NULL,
             updatedAt TEXT NOT NULL
-          )
+          );
+          CREATE TABLE note_account (
+            id TEXT PRIMARY KEY,
+            group_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            account TEXT NOT NULL,
+            password TEXT NOT NULL,
+            extendField TEXT NOT NULL,
+            created_At TEXT NOT NULL,
+            updatedAt TEXT NOT NULL
+          );
           ''');
+    } finally {
+    //  db.dispose();
     }
   }
 

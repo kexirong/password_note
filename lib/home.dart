@@ -24,10 +24,7 @@ class MyHomePageState extends State<MyHomePage> {
   }
 
   void _addAccount(NoteAccount acct) {
-    setState(() =>
-        noteData.addAccount(acct, noteData
-            .groupAt(_index)
-            .id));
+    setState(() => noteData.addAccount(acct, noteData.groupAt(_index).id));
   }
 
   @override
@@ -90,20 +87,15 @@ class MyHomePageState extends State<MyHomePage> {
                           decoration: BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(
-                                    width: 1,
-                                    color: Colors.grey.shade200,
-                                  ))),
+                            width: 1,
+                            color: Colors.grey.shade200,
+                          ))),
                           child: Text(
-                            noteData
-                                .groupAt(index)
-                                .name,
+                            noteData.groupAt(index).name,
                             style: TextStyle(
                               fontSize: 16,
                               color: _index == index
-                                  ? Theme
-                                  .of(context)
-                                  .colorScheme
-                                  .secondary
+                                  ? Theme.of(context).colorScheme.secondary
                                   : null,
                             ),
                             textAlign: TextAlign.center,
@@ -131,16 +123,11 @@ class MyHomePageState extends State<MyHomePage> {
               ),
               child: ListView.builder(
                 itemCount: _index >= 0
-                    ? noteData
-                    .groupAt(_index)
-                    .accounts
-                    .length
+                    ? noteData.getAccounts(noteData.groupAt(_index).id).length
                     : 0,
                 itemBuilder: (BuildContext context, int index) {
                   final noteAccount =
-                  noteData
-                      .groupAt(_index)
-                      .accounts[index];
+                      noteData.getAccounts(noteData.groupAt(_index).id)[index];
                   return InkWell(
                     onTap: () async {
                       await showAccountDetail(noteAccount);
@@ -151,9 +138,9 @@ class MyHomePageState extends State<MyHomePage> {
                       decoration: BoxDecoration(
                           border: Border(
                               bottom: BorderSide(
-                                width: 1,
-                                color: Colors.grey.shade200,
-                              ))),
+                        width: 1,
+                        color: Colors.grey.shade200,
+                      ))),
                       child: Row(
                         children: <Widget>[
                           Expanded(
@@ -210,14 +197,12 @@ class MyHomePageState extends State<MyHomePage> {
               TextButton(
                 child: const Text("确认"),
                 onPressed: () {
-                  if (gNameController.text
-                      .trim()
-                      .isNotEmpty) {
+                  if (gNameController.text.trim().isNotEmpty) {
                     if (noteGroup == null) {
                       setState(() {
                         noteData.addGroup(NoteGroup(gNameController.text));
                         _index = noteData.groupsLength - 1;
-                        });
+                      });
                     } else {
                       setState(() {
                         noteGroup.name = gNameController.text;
@@ -243,8 +228,7 @@ class MyHomePageState extends State<MyHomePage> {
         var fieldMap = <String, String>{
           '账号': account.account ?? '',
           '密码': account.password ?? ''
-        }
-          ..addAll(account.extendField);
+        }..addAll(account.extendField);
 
         var extend = <Widget>[];
         fieldMap.forEach((String k, String v) {
@@ -290,9 +274,7 @@ class MyHomePageState extends State<MyHomePage> {
                       flex: 1,
                       child: TextButton(
                         style: TextButton.styleFrom(
-                            foregroundColor: Theme
-                                .of(context)
-                                .primaryColor),
+                            foregroundColor: Theme.of(context).primaryColor),
                         child: const Text(
                           "编辑",
                         ),
