@@ -1,4 +1,5 @@
-import 'package:sqlite3/common.dart' show CommonDatabase, SqliteException;
+import 'package:sqlite3/common.dart'
+    show CommonDatabase, SqliteException, ResultSet, Row;
 import 'sqlite/sqlite3.dart' show openSqliteDb;
 
 class DatabaseHelper {
@@ -30,8 +31,8 @@ class DatabaseHelper {
           CREATE TABLE note_group (
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
-            created_At TEXT NOT NULL,
-            updatedAt TEXT NOT NULL
+            created_At INTEGER NOT NULL,
+            updatedAt INTEGER NOT NULL
           );
           CREATE TABLE note_account (
             id TEXT PRIMARY KEY,
@@ -40,57 +41,78 @@ class DatabaseHelper {
             account TEXT NOT NULL,
             password TEXT NOT NULL,
             extendField TEXT NOT NULL,
-            created_At TEXT NOT NULL,
-            updatedAt TEXT NOT NULL
+            created_At INTEGER NOT NULL,
+            updatedAt INTEGER NOT NULL
           );
           ''');
     } finally {
-    //  db.dispose();
+      //  db.dispose();
     }
   }
 
-//   // Helper methods
-//
-//   // Inserts a row in the database where each key in the Map is a column name
-//   // and the value is the column value. The return value is the id of the
-//   // inserted row.
-//   Future<int> insert(Car car) async {
-//     Database db = await instance.database;
-//     return await db.insert(table, {'name': car.name, 'miles': car.miles});
-//   }
-//
-//   // All of the rows are returned as a list of maps, where each map is
-//   // a key-value list of columns.
-//   Future<List<Map<String, dynamic>>> queryAllRows() async {
-//     Database db = await instance.database;
-//     return await db.query(table);
-//   }
-//
-//   // Queries rows based on the argument received
-//   Future<List<Map<String, dynamic>>> queryRows(name) async {
-//     Database db = await instance.database;
-//     return await db.query(table, where: "$columnName LIKE '%$name%'");
-//   }
-//
-//   // All of the methods (insert, query, update, delete) can also be done using
-//   // raw SQL commands. This method uses a raw query to give the row count.
-//   Future<int> queryRowCount() async {
-//     Database db = await instance.database;
-//     return Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM $table'));
-//   }
-//
-//   // We are assuming here that the id column in the map is set. The other
-//   // column values will be used to update the row.
-//   Future<int> update(Car car) async {
-//     Database db = await instance.database;
-//     int id = car.toMap()['id'];
-//     return await db.update(table, car.toMap(), where: '$columnId = ?', whereArgs: [id]);
-//   }
-//
-//   // Deletes the row specified by the id. The number of affected rows is
-//   // returned. This should be 1 as long as the row exists.
-//   Future<int> delete(int id) async {
-//     Database db = await instance.database;
-//     return await db.delete(table, where: '$columnId = ?', whereArgs: [id]);
-//   }
+  void dispose() {
+    _database?.dispose();
+    _database = null;
+  }
+
+  Future<ResultSet> queryRows(String table) async {
+    CommonDatabase db = await database;
+    return db.select('SELECT * FROM $table');
+  }
+
+  Future<void> insertRow(String table, Map<String, dynamic> values) async {
+    CommonDatabase db = await database;
+
+    final insert = StringBuffer();
+    insert.write('INSERT INTO ');
+    insert.write(table);
+    insert.write(' (');
+    var i = 0;
+    List<Object?> parameters = <Object?>[];
+    final sbValues = StringBuffer(') VALUES (');
+    values.forEach((String colName, Object? value) {
+      if (i++ > 0) {
+        insert.write(', ');
+        sbValues.write(', ');
+      }
+      insert.write(colName);
+      sbValues.write('?');
+      parameters.add(value);
+    });
+    insert.write(sbValues);
+    return db.execute(insert.toString(), parameters);
+  }
+
+  Future<void> rowUpdate(String table, Map<String, dynamic> values) async {
+    CommonDatabase db = await database;
+    var id = values.remove('id');
+    final update = StringBuffer();
+    // UPDATE COMPANY SET ADDRESS = 'Texas' WHERE ID = 6;
+    update.write('UPDATE ');
+    update.write(table);
+    update.write(' SET ');
+    var i = 0;
+    List<Object?> parameters = <Object?>[];
+    values.forEach((String colName, Object? value) {
+      if (i++ > 0) {
+        update.write(', ');
+      }
+      update.write(colName);
+      update.write(' = ?');
+      parameters.add(value);
+    });
+    update.write(' WHERE id = ?');
+    parameters.add(id);
+    return db.execute(update.toString(), parameters);
+  }
+
+  Future<void> rowDelete(String table, Object id) async {
+    CommonDatabase db = await database;
+    final delete = StringBuffer();
+    delete.write('DELETE FROM ');
+    delete.write(table);
+    delete.write(' WHERE id = ?');
+
+    return db.execute(delete.toString(), [id]);
+  }
 }

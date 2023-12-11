@@ -37,12 +37,10 @@ class NoteData {
   }
 
   NoteGroup groupAt(int index) {
-    //return index > 0 && groups.length > index ? groups[index] : null;
     return groups.elementAt(index);
   }
 
   NoteAccount accountAt(int index) {
-    // return index > 0 && accounts.length > index ? accounts[index] : null;
     return accounts.elementAt(index);
   }
 
@@ -55,6 +53,11 @@ class NoteData {
     return groups.removeAt(index);
   }
 
+  NoteAccount deleteAccount(String accountID) {
+    int index = accountIndexById(accountID);
+    return accounts.removeAt(index);
+  }
+
   int accountIndexById(String id) {
     return accounts.indexWhere((el) => (el.id == id));
   }
@@ -65,19 +68,23 @@ enum RecordType { create, update, delete }
 typedef ID = String;
 
 class Mate {
-  Map<ID, Record> records;
+  Map<ID, RecordMate> records;
 
-  Mate.fromJson(Map<ID, Record> json) : records = json;
+  Mate.fromJson(Map<ID, RecordMate> json) : records = json;
 }
 
-class Record {
+class RecordMate {
+  String id;
   RecordType type;
   int timestamp;
 
-  Record(this.type) : timestamp = DateTime.now().millisecondsSinceEpoch;
+  RecordMate(this.type)
+      : id = uuid(),
+        timestamp = DateTime.now().millisecondsSinceEpoch;
 
-  Record.fromJson(Map<String, dynamic> json)
-      : type = RecordType.values[json['type']],
+  RecordMate.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        type = RecordType.values[json['type']],
         timestamp = json['timestamp'];
 
   Map<String, dynamic> toJson() =>
