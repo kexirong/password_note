@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
-import 'persist.dart';
 
 void main() {
-  DatabaseHelper db = DatabaseHelper();
-  db.database;
   runApp(const MyApp());
 }
 

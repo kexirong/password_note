@@ -3,10 +3,10 @@ import 'package:password_note/util.dart';
 enum ItemType { entry, group, account }
 
 class NoteData {
-  NoteData._privateConstructor(this.groups, this.accounts);
+  NoteData._privateConstructor(this.groups, this.accounts, this.records);
 
-  static final NoteData _instance =
-      NoteData._privateConstructor(<NoteGroup>[], <NoteAccount>[]);
+  static final NoteData _instance = NoteData._privateConstructor(
+      <NoteGroup>[], <NoteAccount>[], <ID, RecordMate>{});
 
   factory NoteData() {
     return _instance;
@@ -14,6 +14,7 @@ class NoteData {
 
   final List<NoteGroup> groups;
   final List<NoteAccount> accounts;
+  final Map<ID, RecordMate> records;
 
   int get groupsLength {
     return groups.length;
@@ -66,12 +67,12 @@ class NoteData {
 enum RecordType { create, update, delete }
 
 typedef ID = String;
-
-class Mate {
-  Map<ID, RecordMate> records;
-
-  Mate.fromJson(Map<ID, RecordMate> json) : records = json;
-}
+//
+// class Mate {
+//   Map<ID, RecordMate> records;
+//
+//   Mate.fromJson(Map<ID, RecordMate> json) : records = json;
+// }
 
 class RecordMate {
   String id;

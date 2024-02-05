@@ -1,6 +1,7 @@
 import 'package:sqlite3/common.dart'
     show CommonDatabase, SqliteException, ResultSet, Row;
 import 'sqlite/sqlite3.dart' show openSqliteDb;
+import 'note_data.dart';
 
 class DatabaseHelper {
   static const _databaseName = "note.db";
@@ -60,7 +61,7 @@ class DatabaseHelper {
     return db.select('SELECT * FROM $table');
   }
 
-  Future<void> insertRow(String table, Map<String, dynamic> values) async {
+  Future<void> rowInsert(String table, Map<String, dynamic> values) async {
     CommonDatabase db = await database;
 
     final insert = StringBuffer();
@@ -87,7 +88,6 @@ class DatabaseHelper {
     CommonDatabase db = await database;
     var id = values.remove('id');
     final update = StringBuffer();
-    // UPDATE COMPANY SET ADDRESS = 'Texas' WHERE ID = 6;
     update.write('UPDATE ');
     update.write(table);
     update.write(' SET ');
@@ -115,4 +115,35 @@ class DatabaseHelper {
 
     return db.execute(delete.toString(), [id]);
   }
+}
+
+List<NoteGroup> getAllGroup() {
+  List<NoteGroup> groups = [];
+  DatabaseHelper helper = DatabaseHelper();
+
+  helper.queryRows('note_group').then((value) => {
+        for (final Row row in value) {groups.add(NoteGroup.fromJson(row))}
+      });
+
+  return groups;
+}
+List<NoteGroup> insertGroup() {
+  List<NoteGroup> groups = [];
+  DatabaseHelper helper = DatabaseHelper();
+
+  helper.queryRows('note_group').then((value) => {
+    for (final Row row in value) {groups.add(NoteGroup.fromJson(row))}
+  });
+
+  return groups;
+}
+List<NoteAccount> getAllAccount() {
+  List<NoteAccount> accounts = [];
+  DatabaseHelper helper = DatabaseHelper();
+
+  helper.queryRows('note_account').then((value) => {
+        for (final Row row in value) {accounts.add(NoteAccount.fromJson(row))}
+      });
+
+  return accounts;
 }

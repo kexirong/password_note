@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:password_note/util.dart';
 import 'note_data.dart';
 import 'account_action.dart';
 
@@ -16,8 +19,25 @@ class MyHomePage extends StatefulWidget {
 
 class MyHomePageState extends State<MyHomePage> {
   final NoteData noteData = NoteData();
-
+  late final String asyncIdentifier;
   int _index = -1;
+
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _prefs.then((SharedPreferences prefs) {
+      var identifier = prefs.getString('async_identifier');
+      if (identifier == null) {
+        identifier = uuid();
+        print(identifier);
+        prefs.setString('async_identifier', identifier);
+      }
+      asyncIdentifier = identifier;
+    });
+  }
 
   void _updateIndex(int index) {
     setState(() => _index = index);

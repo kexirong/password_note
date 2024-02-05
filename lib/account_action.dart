@@ -73,66 +73,48 @@ class MyAccountActionState extends State<AccountAction> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        child: Scaffold(
-          appBar: AppBar(
-              title: Text(widget._action == _Action.add ? '添加账号' : '编辑账号'),
-              actions: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.save),
-                  onPressed: () {
-                    if (!save()) {
-                      return;
-                    }
+    return PopScope(
+      child: Scaffold(
+        appBar: AppBar(
+            title: Text(widget._action == _Action.add ? '添加账号' : '编辑账号'),
+            actions: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.save),
+                onPressed: () {
+                  if (!save()) {
+                    return;
+                  }
 
-                    Fluttertoast.showToast(
-                        msg: "已保存", gravity: ToastGravity.CENTER);
-                    Navigator.pop(context, widget.account);
+                  Fluttertoast.showToast(
+                      msg: "已保存", gravity: ToastGravity.CENTER);
+                  Navigator.pop(context, widget.account);
+                },
+              ),
+            ]),
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Table(
+                  columnWidths: const {
+                    0: FlexColumnWidth(1.0),
+                    1: FlexColumnWidth(2.5),
                   },
-                ),
-              ]),
-          body: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Table(
-                    columnWidths: const {
-                      0: FlexColumnWidth(1.0),
-                      1: FlexColumnWidth(2.5),
-                    },
-                    border: TableBorder.all(
-                      color: Colors.grey,
-                      width: 0.5,
-                    ),
-                    children: _buildTableRow(),
+                  border: TableBorder.all(
+                    color: Colors.grey,
+                    width: 0.5,
                   ),
+                  children: _buildTableRow(),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                          flex: 1,
-                          child: OutlinedButton(
-                              // shape: const Border(
-                              //     left:
-                              //         BorderSide(color: Colors.grey, width: 0.5),
-                              //     bottom:
-                              //         BorderSide(color: Colors.grey, width: 0.5),
-                              //     top:
-                              //         BorderSide(color: Colors.grey, width: 0.5)),
-                              // padding: const EdgeInsets.only(top: 12, bottom: 12),
-                              onPressed: rndPassword,
-                              child: const Text(
-                                "随机密码",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 16),
-                              ))),
-                      Expanded(
-                          flex: 1,
-                          child: OutlinedButton(
-                            // padding: const EdgeInsets.only(top: 12, bottom: 12),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                        flex: 1,
+                        child: OutlinedButton(
                             // shape: const Border(
                             //     left:
                             //         BorderSide(color: Colors.grey, width: 0.5),
@@ -140,57 +122,75 @@ class MyAccountActionState extends State<AccountAction> {
                             //         BorderSide(color: Colors.grey, width: 0.5),
                             //     top:
                             //         BorderSide(color: Colors.grey, width: 0.5)),
-                            child: const Text(
-                              "清空所有",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            onPressed: () {
-                              Fluttertoast.showToast(
-                                  msg: "功能未实现", gravity: ToastGravity.TOP);
-                            },
-                          )),
-                      Expanded(
-                          flex: 1,
-                          child: OutlinedButton(
                             // padding: const EdgeInsets.only(top: 12, bottom: 12),
-                            // shape: const Border(
-                            //     left:
-                            //         BorderSide(color: Colors.grey, width: 0.5),
-                            //     bottom:
-                            //         BorderSide(color: Colors.grey, width: 0.5),
-                            //     top: BorderSide(color: Colors.grey, width: 0.5),
-                            //     right:
-                            //         BorderSide(color: Colors.grey, width: 0.5)),
+                            onPressed: rndPassword,
                             child: const Text(
-                              "添加条目",
+                              "随机密码",
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 16),
-                            ),
-                            onPressed: () {
-                              _addItem();
-                              _saved = false;
-                            },
-                          ))
-                    ],
-                  ),
-                )
-              ],
-            ),
+                            ))),
+                    Expanded(
+                        flex: 1,
+                        child: OutlinedButton(
+                          // padding: const EdgeInsets.only(top: 12, bottom: 12),
+                          // shape: const Border(
+                          //     left:
+                          //         BorderSide(color: Colors.grey, width: 0.5),
+                          //     bottom:
+                          //         BorderSide(color: Colors.grey, width: 0.5),
+                          //     top:
+                          //         BorderSide(color: Colors.grey, width: 0.5)),
+                          child: const Text(
+                            "清空所有",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          onPressed: () {
+                            Fluttertoast.showToast(
+                                msg: "功能未实现", gravity: ToastGravity.TOP);
+                          },
+                        )),
+                    Expanded(
+                        flex: 1,
+                        child: OutlinedButton(
+                          // padding: const EdgeInsets.only(top: 12, bottom: 12),
+                          // shape: const Border(
+                          //     left:
+                          //         BorderSide(color: Colors.grey, width: 0.5),
+                          //     bottom:
+                          //         BorderSide(color: Colors.grey, width: 0.5),
+                          //     top: BorderSide(color: Colors.grey, width: 0.5),
+                          //     right:
+                          //         BorderSide(color: Colors.grey, width: 0.5)),
+                          child: const Text(
+                            "添加条目",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          onPressed: () {
+                            _addItem();
+                            _saved = false;
+                          },
+                        ))
+                  ],
+                ),
+              )
+            ],
           ),
         ),
-        onWillPop: () async {
-          bool? confirm = false;
-          if (!_saved) {
-            confirm = await showReturnConfirm();
-          }
+      ),
+      onPopInvoked: (bool didPop) async {
+        bool? confirm = false;
+        if (!_saved) {
+          confirm = await showReturnConfirm();
+        }
 
-          if ((_saved || confirm!) && context.mounted) {
-            Navigator.pop(context);
-            return Future.value(true);
-          }
-          return Future.value(false);
-        });
+        if ((_saved || confirm!) && context.mounted) {
+          Navigator.of(context).pop();
+        }
+        // return Future.value(false);
+      },
+    );
   }
 
   List<TableRow> _buildTableRow() {
