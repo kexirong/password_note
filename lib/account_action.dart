@@ -35,9 +35,20 @@ class MyAccountActionState extends State<AccountAction> {
   @override
   void initState() {
     super.initState();
-
     // _accountFields = <TextEditingHelper>[];
+  }
 
+  void _addItem() {
+    setState(() {
+      TextEditingHelper helper = TextEditingHelper(2);
+      helper.controllers[0] = TextEditingController(text: '');
+      helper.controllers[1] = TextEditingController(text: '');
+      _accountFields.add(helper);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     TextEditingHelper helper = TextEditingHelper(2);
     helper.controllers[0] = TextEditingController(text: '名称');
     helper.controllers[1] = TextEditingController(text: widget.account.name);
@@ -60,19 +71,6 @@ class MyAccountActionState extends State<AccountAction> {
       helper.controllers[1] = TextEditingController(text: v);
       _accountFields.add(helper);
     });
-  }
-
-  void _addItem() {
-    setState(() {
-      TextEditingHelper helper = TextEditingHelper(2);
-      helper.controllers[0] = TextEditingController(text: '');
-      helper.controllers[1] = TextEditingController(text: '');
-      _accountFields.add(helper);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return PopScope(
       child: Scaffold(
         appBar: AppBar(

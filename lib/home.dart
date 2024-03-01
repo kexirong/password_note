@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:password_note/util.dart';
 import 'note_data.dart';
 import 'account_action.dart';
+import 'persist.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -19,7 +21,9 @@ class MyHomePage extends StatefulWidget {
 
 class MyHomePageState extends State<MyHomePage> {
   final NoteData noteData = NoteData();
+  final DatabaseHelper db = DatabaseHelper();
   late final String asyncIdentifier;
+
   int _index = -1;
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -32,11 +36,31 @@ class MyHomePageState extends State<MyHomePage> {
       var identifier = prefs.getString('async_identifier');
       if (identifier == null) {
         identifier = uuid();
-        print(identifier);
         prefs.setString('async_identifier', identifier);
+      }
+
+      Future.delayed(Duration.zero, () => _load());
+      if (kDebugMode) {
+        print("async_identifier: ${prefs.getString('async_identifier')}");
       }
       asyncIdentifier = identifier;
     });
+  }
+
+  _load() async {
+    if (kDebugMode) {
+      print('----start loading data------------------------------------------');
+    }
+    var dbase = await db.database;
+    var tables = dbase
+        .select(
+            "select count(1) as count from sqlite_master where type = 'table'")
+        .first;
+
+    if (kDebugMode) {
+      print('${tables['count']} pieces of data have been loaded');
+      print('----end loading data--------------------------------------------');
+    }
   }
 
   void _updateIndex(int index) {

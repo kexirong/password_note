@@ -16,7 +16,7 @@ class DatabaseHelper {
   Future<CommonDatabase> get database async {
     if (_database != null) return _database!;
     // lazily instantiate the db the first time it is accessed
-    _database = await openSqliteDb(_databaseName, onCreate: _onCreate);
+    _database = await openSqliteDb(_databaseName, onCreate: onCreate);
     return _database!;
   }
 
@@ -24,32 +24,6 @@ class DatabaseHelper {
     return _instance;
   }
   // SQL code to create the database table
-  void _onCreate(CommonDatabase db) {
-    try {
-      db.execute('select 1 from note_group');
-    } on SqliteException {
-      db.execute('''
-          CREATE TABLE note_group (
-            id TEXT PRIMARY KEY,
-            name TEXT NOT NULL,
-            created_At INTEGER NOT NULL,
-            updatedAt INTEGER NOT NULL
-          );
-          CREATE TABLE note_account (
-            id TEXT PRIMARY KEY,
-            group_id TEXT NOT NULL,
-            name TEXT NOT NULL,
-            account TEXT NOT NULL,
-            password TEXT NOT NULL,
-            extendField TEXT NOT NULL,
-            created_At INTEGER NOT NULL,
-            updatedAt INTEGER NOT NULL
-          );
-          ''');
-    } finally {
-      //  db.dispose();
-    }
-  }
 
   void dispose() {
     _database?.dispose();
@@ -127,16 +101,18 @@ List<NoteGroup> getAllGroup() {
 
   return groups;
 }
+
 List<NoteGroup> insertGroup() {
   List<NoteGroup> groups = [];
   DatabaseHelper helper = DatabaseHelper();
 
   helper.queryRows('note_group').then((value) => {
-    for (final Row row in value) {groups.add(NoteGroup.fromJson(row))}
-  });
+        for (final Row row in value) {groups.add(NoteGroup.fromJson(row))}
+      });
 
   return groups;
 }
+
 List<NoteAccount> getAllAccount() {
   List<NoteAccount> accounts = [];
   DatabaseHelper helper = DatabaseHelper();
@@ -146,4 +122,30 @@ List<NoteAccount> getAllAccount() {
       });
 
   return accounts;
+}
+
+void onCreate(CommonDatabase db) {
+  db.execute('''
+          CREATE TABLE IF NOT EXISTS record_mate (
+            id TEXT PRIMARY KEY,
+            type INTEGER NOT NULL,
+            timestamp INTEGER NOT NULL
+          );
+          CREATE TABLE IF NOT EXISTS note_group (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            created_At INTEGER NOT NULL,
+            updatedAt INTEGER NOT NULL
+          );
+          CREATE TABLE IF NOT EXISTS note_account (
+            id TEXT PRIMARY KEY,
+            group_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            account TEXT NOT NULL,
+            password TEXT NOT NULL,
+            extendField TEXT NOT NULL,
+            created_At INTEGER NOT NULL,
+            updatedAt INTEGER NOT NULL
+          );
+          ''');
 }

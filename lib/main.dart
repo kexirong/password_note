@@ -11,14 +11,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const title = '密码本子';
-    return MaterialApp(
+    return const MaterialApp(
       title: title,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        canvasColor: Colors.white,
-      ),
-      home: const MyHomePage(title: title),
+      // theme: ThemeData(
+      //   platform:
+      // ),
+      home: MyHomePage(title: title),
     );
   }
 }
