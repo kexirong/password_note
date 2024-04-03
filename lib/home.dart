@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -81,8 +80,12 @@ class MyHomePageState extends State<MyHomePage> {
               icon: const Icon(Icons.add),
               onPressed: () async {
                 if (noteData.groupsLength == 0) {
-                  Fluttertoast.showToast(
-                      msg: "无分组，先创建分组", gravity: ToastGravity.CENTER);
+                  const snackBar = SnackBar(
+                    content: Text('无分组，先创建分组'),
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
                   addGroup();
                 } else {
                   var result = await Navigator.push(
@@ -108,7 +111,7 @@ class MyHomePageState extends State<MyHomePage> {
             child: Container(
               decoration: BoxDecoration(
                 border: Border(
-                  right: BorderSide(color: Colors.grey.shade300, width: 0.5),
+                  right: BorderSide(color: Colors.grey.shade300, width: 1),
                 ),
               ),
               child: ListView.builder(
@@ -255,8 +258,12 @@ class MyHomePageState extends State<MyHomePage> {
                     }
                     Navigator.pop(context);
                   } else {
-                    Fluttertoast.showToast(
-                        msg: "分组名不能为空", gravity: ToastGravity.TOP);
+                    const snackBar = SnackBar(
+                      content: Text('分组名不能为空'),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
                   }
                 },
               ),
@@ -292,8 +299,12 @@ class MyHomePageState extends State<MyHomePage> {
                   ),
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: v));
-                    Fluttertoast.showToast(
-                        msg: "已复制到剪贴板", gravity: ToastGravity.BOTTOM);
+                    const snackBar = SnackBar(
+                      content: Text('已复制到剪贴板'),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
                   },
                 ),
               )
@@ -376,7 +387,9 @@ class MyHomePageState extends State<MyHomePage> {
         });
 
     if (i != null) {
-      print("选择了：${i == 1 ? "重命名" : "删除"}");
+      if (kDebugMode) {
+        print("选择了：${i == 1 ? "重命名" : "删除"}");
+      }
     }
     switch (i) {
       case 1:

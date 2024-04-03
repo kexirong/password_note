@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'note_data.dart';
 
 enum _Action { add, edit }
@@ -36,19 +35,6 @@ class MyAccountActionState extends State<AccountAction> {
   void initState() {
     super.initState();
     // _accountFields = <TextEditingHelper>[];
-  }
-
-  void _addItem() {
-    setState(() {
-      TextEditingHelper helper = TextEditingHelper(2);
-      helper.controllers[0] = TextEditingController(text: '');
-      helper.controllers[1] = TextEditingController(text: '');
-      _accountFields.add(helper);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     TextEditingHelper helper = TextEditingHelper(2);
     helper.controllers[0] = TextEditingController(text: '名称');
     helper.controllers[1] = TextEditingController(text: widget.account.name);
@@ -71,6 +57,20 @@ class MyAccountActionState extends State<AccountAction> {
       helper.controllers[1] = TextEditingController(text: v);
       _accountFields.add(helper);
     });
+  }
+
+  void _addItem() {
+    setState(() {
+      TextEditingHelper helper = TextEditingHelper(2);
+      helper.controllers[0] = TextEditingController(text: '');
+      helper.controllers[1] = TextEditingController(text: '');
+      _accountFields.add(helper);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
     return PopScope(
       child: Scaffold(
         appBar: AppBar(
@@ -82,9 +82,11 @@ class MyAccountActionState extends State<AccountAction> {
                   if (!save()) {
                     return;
                   }
+                  const snackBar = SnackBar(
+                    content: Text('已保存'),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-                  Fluttertoast.showToast(
-                      msg: "已保存", gravity: ToastGravity.CENTER);
                   Navigator.pop(context, widget.account);
                 },
               ),
@@ -144,8 +146,12 @@ class MyAccountActionState extends State<AccountAction> {
                             style: TextStyle(fontSize: 16),
                           ),
                           onPressed: () {
-                            Fluttertoast.showToast(
-                                msg: "功能未实现", gravity: ToastGravity.TOP);
+                            const snackBar = SnackBar(
+                              content: Text('功能未实现'),
+                            );
+
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
                           },
                         )),
                     Expanded(
@@ -401,8 +407,13 @@ class MyAccountActionState extends State<AccountAction> {
               child: const Text("复制密码"),
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: password));
-                Fluttertoast.showToast(
-                    msg: "已复制到剪贴板", gravity: ToastGravity.BOTTOM);
+                const snackBar = SnackBar(
+                  content:  Text('已复制到剪贴板!'),
+
+                );
+
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
                 Navigator.pop(context);
               },
             ),
@@ -417,12 +428,23 @@ class MyAccountActionState extends State<AccountAction> {
       var text0 = element.controllers[0].text.trim();
       var text1 = element.controllers[1].text.trim();
       if (text0.trim().isEmpty) {
-        Fluttertoast.showToast(msg: "此字段不能为空", gravity: ToastGravity.TOP);
+        const snackBar = SnackBar(
+          content:   Text('此字段不能为空!'),
+
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
         FocusScope.of(context).requestFocus(element.nodes[0]);
         return false;
       }
-      if (text1.trim().isEmpty) {
-        Fluttertoast.showToast(msg: "此字段不能为空", gravity: ToastGravity.TOP);
+      if (text1.isEmpty) {
+        const snackBar = SnackBar(
+          content:   Text('此字段不能为空!'),
+        );
+
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
         FocusScope.of(context).requestFocus(element.nodes[1]);
         return false;
       }
