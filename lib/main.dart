@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:password_note/note_data.dart';
 import 'home.dart';
+import 'hive.dart';
 
-void main() {
+void main() async {
+  await hiveInit();
+
   runApp(const MyApp());
 }
 
@@ -11,15 +16,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const title = '密码本子';
-    return MaterialApp(
-      title: title,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.blue,
+
+    final appData = NoteData.getInstance();
+
+    return ChangeNotifierProvider(
+    create: (context) => AppData(appData),
+      child: MaterialApp(
+          title: title,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.blue,
+            ),
+          ),
+          home: const HomePage(title: title),
         ),
-      ),
-      home: const MyHomePage(title: title),
     );
   }
 }
+

@@ -5,74 +5,64 @@ enum ItemType { entry, group, account }
 class NoteData {
   NoteData._privateConstructor(this.groups, this.accounts, this.records);
 
-  static final NoteData _instance = NoteData._privateConstructor(
-      <NoteGroup>[], <NoteAccount>[], <ID, RecordMate>{});
+  static NoteData? _instance;
 
-  factory NoteData() {
-    return _instance;
+  factory NoteData.getInstance({
+    List<NoteGroup>? groups,
+    List<NoteAccount>? accounts,
+    Map<ID, RecordMate>? records,
+  }) {
+    _instance ??= NoteData._privateConstructor(groups ?? [], accounts ?? [], records ?? {});
+    return _instance!;
   }
 
   final List<NoteGroup> groups;
   final List<NoteAccount> accounts;
   final Map<ID, RecordMate> records;
 
-  int get groupsLength {
-    return groups.length;
-  }
+  // void addAccount(NoteAccount account, String groupID) {
+  //   accounts.add(account);
+  //   account.groupID = groupID;
+  // }
+  //
+  // void addGroup(NoteGroup group) {
+  //   groups.add(group);
+  // }
 
-  int get accountsLength {
-    return accounts.length;
-  }
+  // List<NoteAccount> getAccounts(String groupID) {
+  //   return accounts.where((element) => element.groupID == groupID).toList();
+  // }
 
-  void addAccount(NoteAccount account, String groupID) {
-    accounts.add(account);
-    account.groupID = groupID;
-  }
+  // NoteGroup groupAt(int index) {
+  //   return groups.elementAt(index);
+  // }
 
-  void addGroup(NoteGroup group) {
-    groups.add(group);
-  }
+  // NoteAccount accountAt(int index) {
+  //   return accounts.elementAt(index);
+  // }
 
-  List<NoteAccount> getAccounts(String groupID) {
-    return accounts.where((element) => element.groupID == groupID).toList();
-  }
+  // int groupIndexById(String id) {
+  //   return groups.indexWhere((el) => (el.id == id));
+  // }
 
-  NoteGroup groupAt(int index) {
-    return groups.elementAt(index);
-  }
-
-  NoteAccount accountAt(int index) {
-    return accounts.elementAt(index);
-  }
-
-  int groupIndexById(String id) {
-    return groups.indexWhere((el) => (el.id == id));
-  }
-
-  NoteGroup deleteGroup(String groupID) {
-    int index = groupIndexById(groupID);
-    return groups.removeAt(index);
-  }
-
-  NoteAccount deleteAccount(String accountID) {
-    int index = accountIndexById(accountID);
-    return accounts.removeAt(index);
-  }
-
-  int accountIndexById(String id) {
-    return accounts.indexWhere((el) => (el.id == id));
-  }
+  // NoteGroup deleteGroup(String groupID) {
+  //   int index = groupIndexById(groupID);
+  //   return groups.removeAt(index);
+  // }
+  //
+  // NoteAccount deleteAccount(String accountID) {
+  //   int index = accountIndexById(accountID);
+  //   return accounts.removeAt(index);
+  // }
+  //
+  // int accountIndexById(String id) {
+  //   return accounts.indexWhere((el) => (el.id == id));
+  // }
 }
 
 enum RecordType { create, update, delete }
 
 typedef ID = String;
-//
-// class Mate {
-//   Map<ID, RecordMate> records;
-//
-//   Mate.fromJson(Map<ID, RecordMate> json) : records = json;
-// }
 
 class RecordMate {
   String id;
@@ -88,8 +78,7 @@ class RecordMate {
         type = RecordType.values[json['type']],
         timestamp = json['timestamp'];
 
-  Map<String, dynamic> toJson() =>
-      <String, dynamic>{'type': type.index, 'timestamp': timestamp};
+  Map<String, dynamic> toJson() => <String, dynamic>{'type': type.index, 'timestamp': timestamp};
 }
 
 class NoteGroup {
@@ -99,16 +88,6 @@ class NoteGroup {
   NoteGroup(this.name)
       : id = uuid(),
         createdAt = DateTime.now().millisecondsSinceEpoch;
-
-  // int get accountsLength {
-  //   return accounts.length;
-  // }
-
-  // List<NoteAccount> get accounts {
-  //   var data = NoteData();
-  //   return data.accounts.where((element) => element.groupID == id).toList();
-  //   // return <NoteAccount>[];
-  // }
 
   NoteGroup.fromJson(Map<String, dynamic> json)
       : id = json['id'],
