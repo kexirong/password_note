@@ -1,84 +1,32 @@
 import 'package:password_note/util.dart';
 
-enum ItemType { entry, group, account }
-
-class NoteData {
-  NoteData._privateConstructor(this.groups, this.accounts, this.records);
-
-  static NoteData? _instance;
-
-  factory NoteData.getInstance({
-    List<NoteGroup>? groups,
-    List<NoteAccount>? accounts,
-    Map<ID, RecordMate>? records,
-  }) {
-    _instance ??= NoteData._privateConstructor(groups ?? [], accounts ?? [], records ?? {});
-    return _instance!;
-  }
-
-  final List<NoteGroup> groups;
-  final List<NoteAccount> accounts;
-  final Map<ID, RecordMate> records;
-
-  // void addAccount(NoteAccount account, String groupID) {
-  //   accounts.add(account);
-  //   account.groupID = groupID;
-  // }
-  //
-  // void addGroup(NoteGroup group) {
-  //   groups.add(group);
-  // }
-
-  // List<NoteAccount> getAccounts(String groupID) {
-  //   return accounts.where((element) => element.groupID == groupID).toList();
-  // }
-
-  // NoteGroup groupAt(int index) {
-  //   return groups.elementAt(index);
-  // }
-
-  // NoteAccount accountAt(int index) {
-  //   return accounts.elementAt(index);
-  // }
-
-  // int groupIndexById(String id) {
-  //   return groups.indexWhere((el) => (el.id == id));
-  // }
-
-  // NoteGroup deleteGroup(String groupID) {
-  //   int index = groupIndexById(groupID);
-  //   return groups.removeAt(index);
-  // }
-  //
-  // NoteAccount deleteAccount(String accountID) {
-  //   int index = accountIndexById(accountID);
-  //   return accounts.removeAt(index);
-  // }
-  //
-  // int accountIndexById(String id) {
-  //   return accounts.indexWhere((el) => (el.id == id));
-  // }
-}
-
 enum RecordType { create, update, delete }
+
+enum ItemType { group, account }
 
 typedef ID = String;
 
 class RecordMate {
   String id;
-  RecordType type;
+  ItemType itemType;
+  RecordType recordType;
   int timestamp;
 
-  RecordMate(this.type)
-      : id = uuid(),
-        timestamp = DateTime.now().millisecondsSinceEpoch;
+  RecordMate(this.id, this.itemType, this.recordType)
+      : timestamp = DateTime.now().millisecondsSinceEpoch;
 
   RecordMate.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        type = RecordType.values[json['type']],
+        recordType = RecordType.values[json['recordType']],
+        itemType = ItemType.values[json['itemType']],
         timestamp = json['timestamp'];
 
-  Map<String, dynamic> toJson() => <String, dynamic>{'type': type.index, 'timestamp': timestamp};
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'id': id,
+        'recordType': recordType.index,
+        'itemType': itemType.index,
+        'timestamp': timestamp
+      };
 }
 
 class NoteGroup {

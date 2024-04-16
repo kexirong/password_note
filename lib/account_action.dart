@@ -12,7 +12,7 @@ class AccountAction extends StatefulWidget {
   final _Action _action;
 
   @override
-  MyAccountActionState createState() => MyAccountActionState();
+  AccountActionState createState() => AccountActionState();
 }
 
 class TextEditingHelper {
@@ -24,8 +24,8 @@ class TextEditingHelper {
         controllers = List.filled(length, TextEditingController());
 }
 
-class MyAccountActionState extends State<AccountAction> {
-  MyAccountActionState();
+class AccountActionState extends State<AccountAction> {
+  AccountActionState();
 
   bool _saved = true;
 
@@ -47,8 +47,7 @@ class MyAccountActionState extends State<AccountAction> {
 
     helper = TextEditingHelper(2);
     helper.controllers[0] = TextEditingController(text: '密码');
-    helper.controllers[1] =
-        TextEditingController(text: widget.account.password);
+    helper.controllers[1] = TextEditingController(text: widget.account.password);
     _accountFields.add(helper);
 
     widget.account.extendField.forEach((k, v) {
@@ -70,27 +69,27 @@ class MyAccountActionState extends State<AccountAction> {
 
   @override
   Widget build(BuildContext context) {
-
     return PopScope(
       child: Scaffold(
         appBar: AppBar(
-            title: Text(widget._action == _Action.add ? '添加账号' : '编辑账号'),
-            actions: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.save),
-                onPressed: () {
-                  if (!save()) {
-                    return;
-                  }
-                  const snackBar = SnackBar(
-                    content: Text('已保存'),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          title: Text(widget._action == _Action.add ? '添加账号' : '编辑账号'),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.save),
+              onPressed: () {
+                if (!save()) {
+                  return;
+                }
+                const snackBar = SnackBar(
+                  content: Text('已保存'),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-                  Navigator.pop(context, widget.account);
-                },
-              ),
-            ]),
+                Navigator.pop(context, widget.account);
+              },
+            ),
+          ],
+        ),
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
@@ -115,14 +114,6 @@ class MyAccountActionState extends State<AccountAction> {
                     Expanded(
                         flex: 1,
                         child: OutlinedButton(
-                            // shape: const Border(
-                            //     left:
-                            //         BorderSide(color: Colors.grey, width: 0.5),
-                            //     bottom:
-                            //         BorderSide(color: Colors.grey, width: 0.5),
-                            //     top:
-                            //         BorderSide(color: Colors.grey, width: 0.5)),
-                            // padding: const EdgeInsets.only(top: 12, bottom: 12),
                             onPressed: rndPassword,
                             child: const Text(
                               "随机密码",
@@ -132,14 +123,6 @@ class MyAccountActionState extends State<AccountAction> {
                     Expanded(
                         flex: 1,
                         child: OutlinedButton(
-                          // padding: const EdgeInsets.only(top: 12, bottom: 12),
-                          // shape: const Border(
-                          //     left:
-                          //         BorderSide(color: Colors.grey, width: 0.5),
-                          //     bottom:
-                          //         BorderSide(color: Colors.grey, width: 0.5),
-                          //     top:
-                          //         BorderSide(color: Colors.grey, width: 0.5)),
                           child: const Text(
                             "清空所有",
                             textAlign: TextAlign.center,
@@ -151,21 +134,11 @@ class MyAccountActionState extends State<AccountAction> {
                             );
 
                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
                           },
                         )),
                     Expanded(
                         flex: 1,
                         child: OutlinedButton(
-                          // padding: const EdgeInsets.only(top: 12, bottom: 12),
-                          // shape: const Border(
-                          //     left:
-                          //         BorderSide(color: Colors.grey, width: 0.5),
-                          //     bottom:
-                          //         BorderSide(color: Colors.grey, width: 0.5),
-                          //     top: BorderSide(color: Colors.grey, width: 0.5),
-                          //     right:
-                          //         BorderSide(color: Colors.grey, width: 0.5)),
                           child: const Text(
                             "添加条目",
                             textAlign: TextAlign.center,
@@ -188,11 +161,10 @@ class MyAccountActionState extends State<AccountAction> {
         if (!_saved) {
           confirm = await showReturnConfirm();
         }
-
-        if ((_saved || confirm!) && context.mounted) {
-          Navigator.of(context).pop();
+        if (!context.mounted) return;
+        if ((_saved || confirm!)) {
+          Navigator.pop(context);
         }
-        // return Future.value(false);
       },
     );
   }
@@ -208,8 +180,6 @@ class MyAccountActionState extends State<AccountAction> {
               verticalAlignment: TableCellVerticalAlignment.middle,
               child: TextField(
                 enabled: index > 2,
-//                autofocus: _accountFields[index][0].text == '新增',
-//                 focusNode: _accountFields[index].nodes[0],
                 maxLength: 12,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
@@ -217,8 +187,7 @@ class MyAccountActionState extends State<AccountAction> {
                 ),
                 controller: _accountFields[index].controllers[0],
                 decoration: const InputDecoration(
-                  contentPadding:
-                      EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 12),
+                  contentPadding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 12),
                   border: InputBorder.none,
                   counterText: '',
                 ),
@@ -231,16 +200,12 @@ class MyAccountActionState extends State<AccountAction> {
                   Expanded(
                     flex: 5,
                     child: TextField(
-                      // autofocus:
-                      //     _accountFields[index].controllers[1].text.isEmpty,
-                      // focusNode: _accountFields[index].nodes[1],
                       maxLines: 4,
                       minLines: 1,
                       style: const TextStyle(fontSize: 16),
                       controller: _accountFields[index].controllers[1],
                       decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.only(
-                            left: 8, right: 0, top: 12, bottom: 12),
+                        contentPadding: EdgeInsets.only(left: 8, right: 0, top: 12, bottom: 12),
                         border: InputBorder.none,
                         counterText: '',
                       ),
@@ -299,8 +264,7 @@ class MyAccountActionState extends State<AccountAction> {
       }
       var rnd = Random();
       return String.fromCharCodes(
-        Iterable.generate(slider.truncate(),
-            (_) => chars.codeUnitAt(rnd.nextInt(chars.length))),
+        Iterable.generate(slider.truncate(), (_) => chars.codeUnitAt(rnd.nextInt(chars.length))),
       );
     }
 
@@ -408,8 +372,7 @@ class MyAccountActionState extends State<AccountAction> {
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: password));
                 const snackBar = SnackBar(
-                  content:  Text('已复制到剪贴板!'),
-
+                  content: Text('已复制到剪贴板!'),
                 );
 
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -429,8 +392,7 @@ class MyAccountActionState extends State<AccountAction> {
       var text1 = element.controllers[1].text.trim();
       if (text0.trim().isEmpty) {
         const snackBar = SnackBar(
-          content:   Text('此字段不能为空!'),
-
+          content: Text('此字段不能为空!'),
         );
 
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -440,9 +402,8 @@ class MyAccountActionState extends State<AccountAction> {
       }
       if (text1.isEmpty) {
         const snackBar = SnackBar(
-          content:   Text('此字段不能为空!'),
+          content: Text('此字段不能为空!'),
         );
-
 
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         FocusScope.of(context).requestFocus(element.nodes[1]);

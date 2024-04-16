@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
 // import 'package:password_note/util.dart';
 import 'note_data.dart';
 import 'account_action.dart';
@@ -10,29 +11,20 @@ import 'account_action.dart';
 
 part 'app_data_provider.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key, required this.title});
 
   final String title;
 
   @override
-  HomePageState createState() => HomePageState();
-}
-
-class HomePageState extends State<HomePage> {
-  void _addGroupCB() {
-    addGroup();
-  }
-
-  @override
   Widget build(BuildContext context) {
     if (kDebugMode) {
-      print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++HomePageState rebuild");
+      print("%%%%%%%%%%%%%%%%%%%%%%%%%%HomePageState rebuild%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
     }
     final appData = Provider.of<AppData>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
         actions: <Widget>[
           IconButton(
               icon: const Icon(Icons.add),
@@ -44,7 +36,11 @@ class HomePageState extends State<HomePage> {
 
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-                  addGroup();
+                  var groupName = await inputGroupName(context: context);
+                  if (groupName != null && groupName.isNotEmpty) {
+                    appData.addNoteGroup(NoteGroup(groupName));
+                    appData.setIndex(appData.noteGroups.length - 1);
+                  }
                 } else {
                   var result = await Navigator.push(
                     context,
@@ -62,86 +58,72 @@ class HomePageState extends State<HomePage> {
           IconButton(icon: const Icon(Icons.menu), onPressed: () {}),
         ],
       ),
-      body: Row(
+      body: const Row(
         children: <Widget>[
           Expanded(
             flex: 1,
-            child: GroupListWidget(addGroup: _addGroupCB),
+            child: GroupListWidget(),
           ),
-          const Expanded(
+          Expanded(
             flex: 3,
-            child: AccountList(),
+            child: AccountListWidget(),
           ),
         ],
       ),
     );
   }
+}
 
-  void addGroup({NoteGroup? noteGroup}) async {
-    final appData = Provider.of<AppData>(context);
-    var add = noteGroup == null;
-    await showDialog<bool>(
-        context: context,
-        builder: (context) {
-          TextEditingController gNameController = TextEditingController();
-          gNameController.text = noteGroup?.name ?? "";
+Future<String?> inputGroupName({String? noteGroupName, required BuildContext context}) async {
+  var add = noteGroupName == null;
+  return await showDialog<String?>(
+      context: context,
+      builder: (context) {
+        TextEditingController gNameController = TextEditingController();
+        gNameController.text = noteGroupName ?? "";
 
-          return AlertDialog(
-            title: Text(add ? "添加分组" : '重命名'),
-            content: TextField(
-              autofocus: true,
-              maxLength: 6,
-              controller: gNameController,
-              decoration: const InputDecoration(
-                hintText: "分组名最多6个字符",
-              ),
+        return AlertDialog(
+          title: Text(add ? "添加分组" : '重命名'),
+          content: TextField(
+            autofocus: true,
+            maxLength: 6,
+            controller: gNameController,
+            decoration: const InputDecoration(
+              hintText: "分组名最多6个字符",
             ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text("取消"),
-                onPressed: () => Navigator.pop(context),
-              ),
-              TextButton(
-                child: const Text("确认"),
-                onPressed: () {
-                  if (gNameController.text.trim().isNotEmpty) {
-                    if (noteGroup == null) {
-                      appData.addNoteGroup(NoteGroup(gNameController.text));
-                      appData.setIndex(appData.noteGroups.length - 1);
-                      // setState(() {
-                      //   noteData.addGroup(NoteGroup(gNameController.text));
-                      //   _index = noteData.groups.length - 1;
-                      // });
-                    } else {
-                      appData.noteGroupSetName(gNameController.text);
-                      // setState(() {
-                      //   noteGroup.name = gNameController.text;
-                      //   _index = noteData.groupIndexById(noteGroup.id);
-                      // });
-                    }
-                    Navigator.pop(context);
-                  } else {
-                    const snackBar = SnackBar(
-                      content: Text('分组名不能为空'),
-                    );
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("取消"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            TextButton(
+              child: const Text("确认"),
+              onPressed: () {
+                if (gNameController.text.trim().isNotEmpty) {
+                  Navigator.of(context).pop(gNameController.text.trim());
+                } else {
+                  const snackBar = SnackBar(
+                    content: Text('分组名不能为空'),
+                  );
 
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  }
-                },
-              ),
-            ],
-          );
-        });
-  }
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
+              },
+            ),
+          ],
+        );
+      });
 }
 
 class GroupListWidget extends StatelessWidget {
-  const GroupListWidget({super.key, required this.addGroup});
-
-  final void Function() addGroup;
+  const GroupListWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print("%%%%%%%%%%%%%%%%%%%%%%%%%%GroupListWidget rebuild%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+    }
     final appData = Provider.of<AppData>(context);
 
     var groups = appData.noteGroups;
@@ -162,7 +144,13 @@ class GroupListWidget extends StatelessWidget {
                 Icons.add,
                 color: Colors.black54,
               ),
-              onPressed: () => addGroup(),
+              onPressed: () async {
+                var groupName = await inputGroupName(context: context);
+                if (groupName != null && groupName.isNotEmpty) {
+                  appData.addNoteGroup(NoteGroup(groupName));
+                  appData.setIndex(appData.noteGroups.length - 1);
+                }
+              },
             );
           } else {
             if (kDebugMode) {
@@ -194,21 +182,16 @@ class GroupListWidget extends StatelessWidget {
 
                   switch (action) {
                     case 1:
-                      if (kDebugMode) {
-                        print("重命名");
-                      }
                       if (!context.mounted) return;
-                      var newName = await _renameNoteGroup(groups[index], context);
+                      var newName =
+                          await inputGroupName(noteGroupName: groups[index].name, context: context);
 
                       if (newName != null && newName.isNotEmpty) {
-                        groups[index].name = newName;
-                        // noteGroupWidget.rename(index, newName);
+                        appData.noteGroupSetName(index,newName);
                       }
 
                     case 2:
-                      if (kDebugMode) {
-                        print("删除");
-                      }
+                      appData.setIndex(index - 1);
                       appData.noteGroupRemoveAt(index);
                   }
                 });
@@ -226,8 +209,6 @@ class GroupListWidget extends StatelessWidget {
             children: <Widget>[
               SimpleDialogOption(
                 onPressed: () {
-                  // 返回1
-                  // if (!context.mounted) return;
                   Navigator.of(context).pop(1);
                 },
                 child: const Padding(
@@ -237,8 +218,6 @@ class GroupListWidget extends StatelessWidget {
               ),
               SimpleDialogOption(
                 onPressed: () {
-                  // 返回2
-                  // if (!context.mounted) return;
                   Navigator.of(context).pop(2);
                 },
                 child: const Padding(
@@ -250,53 +229,21 @@ class GroupListWidget extends StatelessWidget {
           );
         });
   }
-
-  Future<String?> _renameNoteGroup(NoteGroup noteGroup, BuildContext context) async {
-    return await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) {
-        TextEditingController controller = TextEditingController();
-        controller.text = noteGroup.name;
-        return AlertDialog(
-          title: const Text('重命名'),
-          content: TextField(
-            controller: controller,
-            decoration: const InputDecoration(labelText: '新名称'),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                // if (!context.mounted) return;
-                Navigator.of(context).pop();
-              },
-              child: const Text('取消'),
-            ),
-            TextButton(
-              onPressed: () {
-                String newName = controller.text;
-                // if (!context.mounted) return;
-                Navigator.of(context).pop(newName);
-              },
-              child: const Text('确认'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
 
-class AccountList extends StatelessWidget {
-  const AccountList({super.key});
+class AccountListWidget extends StatelessWidget {
+  const AccountListWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final appData = Provider.of<AppData>(context);
+    if (kDebugMode) {
+      print("%%%%%%%%%%%%%%%%%%%%%%%%%%AccountList rebuild%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+    }
 
     var accounts = appData.noteAccounts;
     return Container(
       decoration: BoxDecoration(
-//                color: Colors.white,
         border: Border(right: BorderSide(color: Colors.grey.shade300, width: 0.5)),
       ),
       child: ListView.builder(
@@ -311,7 +258,7 @@ class AccountList extends StatelessWidget {
             onTap: () async {
               var result = await showAccountDetail(noteAccount, context);
               if (result is NoteAccount) {
-                accounts[index] = result;
+                appData.updateNoteAccount(index, result);
               }
             },
             child: Container(
@@ -413,7 +360,6 @@ class AccountList extends StatelessWidget {
                           if (!context.mounted) return;
 
                           Navigator.of(context).pop(result);
-                          // setState(() => account = result);
                         },
                       ))
                 ],

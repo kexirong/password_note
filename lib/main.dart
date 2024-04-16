@@ -17,21 +17,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     const title = '密码本子';
 
-    final appData = NoteData.getInstance();
+    // final noteData = NoteData.getInstance();
 
     return ChangeNotifierProvider(
-    create: (context) => AppData(appData),
+      create: (context) => AppData(),
       child: MaterialApp(
-          title: title,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.blue,
-            ),
+        title: title,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.blue,
           ),
-          home: const HomePage(title: title),
         ),
+        home: const HomePage(title: title),
+      ),
     );
   }
 }
-

@@ -1,75 +1,68 @@
 part of 'home.dart';
 
-class AppData extends ChangeNotifier {
-  AppData(NoteData noteData) : _noteData = noteData;
-  final NoteData _noteData;
+class AppData with ChangeNotifier {
+  // AppData() ;
+  // final NoteData _noteData;
+  final List<NoteGroup> _groups = [];
+  final List<NoteAccount> _accounts = [];
+  final List<RecordMate> _records = [];
   int _index = 0;
 
   int get index => _index;
 
-  List<NoteGroup> get noteGroups => _noteData.groups;
+  List<NoteGroup> get noteGroups => _groups;
 
   String? get _currentGroupID {
-    return _noteData.groups.isNotEmpty ? _noteData.groups[_index].id : null;
+    return _groups.isNotEmpty ? _groups[_index].id : null;
   }
+
+  List<RecordMate> get noteRecords => _records;
 
   List<NoteAccount> get noteAccounts => getNoteAccountsByGroupID(_currentGroupID);
 
   List<NoteAccount> getNoteAccountsByGroupID(String? groupID) {
-    return _noteData.accounts.where((element) => element.groupID == groupID).toList();
+    return _accounts.where((element) => element.groupID == groupID).toList();
   }
 
-  void noteGroupSetName(String newName) {
-    _noteData.groups[_index].name = newName;
+  void noteGroupSetName(int index, String newName) {
+    _groups[index].name = newName;
     notifyListeners();
   }
 
   void addNoteGroup(NoteGroup group) {
-    _noteData.groups.add(group);
-    // notifyListeners();
+    _groups.add(group);
+    notifyListeners();
   }
 
   void addNoteAccount(NoteAccount account) {
     account.groupID = _currentGroupID;
-    _noteData.accounts.add(account);
+    _accounts.add(account);
+    notifyListeners();
+  }
+
+  void updateNoteAccount(int index, NoteAccount account) {
+    noteAccounts[index] = account;
     notifyListeners();
   }
 
   void noteGroupRemoveAt(int index) {
-    _noteData.groups.removeAt(index);
+    _groups.removeAt(index);
     notifyListeners();
   }
 
   void noteAccountRemoveByID(String accountID) {
-    int index = _noteData.accounts.indexWhere((el) => (el.id == accountID));
-    _noteData.accounts.removeAt(index);
+    int index = _accounts.indexWhere((el) => (el.id == accountID));
+    _accounts.removeAt(index);
     notifyListeners();
   }
 
   void setIndex(int index) {
-    if (index >= 0 && index < _noteData.groups.length) {
+    if (index >= 0 && index < _groups.length) {
       _index = index;
+      if (kDebugMode) {
+        print("setIndex: $index");
+      }
       notifyListeners();
     }
   }
 }
-
-// // 定义一个全局的 InheritedWidget
-// class AppDataProvider extends InheritedWidget {
-//   final AppData appData;
-//
-//   const AppDataProvider({
-//     super.key,
-//     required this.appData,
-//     required super.child,
-//   });
-//
-//   static AppDataProvider of(BuildContext context) {
-//     return context.dependOnInheritedWidgetOfExactType<AppDataProvider>()!;
-//   }
-//
-//   @override
-//   bool updateShouldNotify(covariant InheritedWidget oldWidget) {
-//     return true;
-//   }
-// }
