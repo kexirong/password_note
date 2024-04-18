@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'note_data.dart';
 
@@ -32,6 +33,9 @@ List<NoteAccount> hiveGetAllAccounts() {
   var accountBox = Hive.box<String>(hiveNoteAccountBox);
 
   for (var element in accountBox.values) {
+    if (kDebugMode) {
+      print("hiveGetAllAccounts: $element");
+    }
     var jsonMap = json.decode(element);
     accounts.add(NoteAccount.fromJson(jsonMap));
   }

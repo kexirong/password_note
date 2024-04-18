@@ -66,6 +66,16 @@ class NoteAccount {
     return extendField.length + 2;
   }
 
+  //
+  //     : id = json['id'],
+  // groupID = json['group_id'],
+  // name = json['name'],
+  // account = json['account'],
+  // password = json['password'],
+  // createdAt = json['created_at'],
+  // updatedAt = json['updated_at'],
+  // extendField = (json['extends'] ?? {}) as Map<String, String>;
+
   NoteAccount.fromJson(Map<String, dynamic> json)
       : id = json.remove('id'),
         groupID = json.remove('group_id'),
@@ -74,7 +84,9 @@ class NoteAccount {
         password = json.remove('password'),
         createdAt = json.remove('created_at'),
         updatedAt = json.remove('updated_at'),
-        extendField = json as Map<String, String>;
+        extendField = {} {
+    json.forEach((key, value) => extendField[key] = value!.toString());
+  }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {
@@ -82,6 +94,7 @@ class NoteAccount {
       'group_id': groupID,
       'name': name,
       'account': account,
+      'password': password,
       'created_at': createdAt,
       'updated_at': updatedAt,
     };
