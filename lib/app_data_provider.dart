@@ -1,11 +1,17 @@
 part of 'home.dart';
 
-class AppData with ChangeNotifier {
-  // AppData() ;
-  // final NoteData _noteData;
-  final List<NoteGroup> _groups = [];
-  final List<NoteAccount> _accounts = [];
-  final List<RecordMate> _records = [];
+class AppData extends ChangeNotifier {
+  AppData({List<NoteGroup>? groups, List<NoteAccount>? accounts, List<RecordMate>? records})
+      : _groups = groups ?? [],
+        _accounts = accounts ?? [],
+        _records = records ?? [];
+
+  final List<NoteGroup> _groups;
+
+  final List<NoteAccount> _accounts;
+
+  final List<RecordMate> _records;
+
   int _index = 0;
 
   int get index => _index;
@@ -25,18 +31,26 @@ class AppData with ChangeNotifier {
   }
 
   void recordChange(RecordType type, String itemID, ItemType itemType) {
-    _records.add(RecordMate(itemID, itemType, type));
+    var recordBox = Hive.box<String>(hiveRecordMateBox);
+    var rm = RecordMate(itemID, itemType, type);
+    _records.add(rm);
+    recordBox.put(rm.id, json.encode(rm.toJson()));
   }
 
   void noteGroupSetName(int index, String newName) {
-    _groups[index].name = newName;
+    var g = _groups[index];
+    g.name = newName;
     recordChange(RecordType.update, _groups[index].id, ItemType.group);
+    var groupBox = Hive.box<String>(hiveNoteGroupBox);
+    groupBox.put(g.id, json.encode(g.toJson()));
     notifyListeners();
   }
 
   void addNoteGroup(NoteGroup group) {
     _groups.add(group);
     recordChange(RecordType.create, group.id, ItemType.group);
+    var groupBox = Hive.box<String>(hiveNoteGroupBox);
+    groupBox.put(group.id, json.encode(group.toJson()));
     notifyListeners();
   }
 
@@ -44,29 +58,33 @@ class AppData with ChangeNotifier {
     account.groupID = _currentGroupID;
     _accounts.add(account);
     recordChange(RecordType.create, account.id, ItemType.account);
+    var accountBox = Hive.box<String>(hiveNoteAccountBox);
+    accountBox.put(account.id, json.encode(account.toJson()));
     notifyListeners();
   }
 
   void updateNoteAccount(NoteAccount account) {
-    // var index = noteAccounts.indexOf(account);
-
-
-    // int lIndex = _accounts.indexWhere((el) => (el.id == account.id));
-    // noteAccounts[lIndex] = account;
-    recordChange(RecordType.update, account.id, ItemType.account);
     notifyListeners();
+
+    recordChange(RecordType.update, account.id, ItemType.account);
+    var accountBox = Hive.box<String>(hiveNoteAccountBox);
+    accountBox.put(account.id, json.encode(account.toJson()));
   }
 
   void noteGroupRemoveAt(int index) {
     var group = _groups.removeAt(index);
     recordChange(RecordType.delete, group.id, ItemType.group);
+    var groupBox = Hive.box<String>(hiveNoteGroupBox);
+    groupBox.delete(group.id);
     notifyListeners();
   }
 
   void noteAccountRemoveByID(String accountID) {
     int index = _accounts.indexWhere((el) => (el.id == accountID));
-    var account= _accounts.removeAt(index);
+    var account = _accounts.removeAt(index);
     recordChange(RecordType.delete, account.id, ItemType.account);
+    var accountBox = Hive.box<String>(hiveNoteAccountBox);
+    accountBox.delete(account.id);
     notifyListeners();
   }
 

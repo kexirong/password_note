@@ -1,14 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
-
+import 'package:hive/hive.dart';
+import 'hive.dart';
 import 'note_data.dart';
 import 'account_action.dart';
 
 
-// import 'package:hive/hive.dart';
+
 
 part 'app_data_provider.dart';
 
@@ -155,8 +157,6 @@ class GroupListWidget extends StatelessWidget {
             );
           } else {
             return InkWell(
-              // focusColor: Theme.of(context).colorScheme.inversePrimary,
-              // hoverColor: Theme.of(context).colorScheme.inversePrimary,
               child: Container(
                 margin: const EdgeInsets.only(left: 12, right: 12),
                 padding: const EdgeInsets.only(top: 16, bottom: 16),

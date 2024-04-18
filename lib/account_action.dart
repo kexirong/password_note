@@ -103,7 +103,7 @@ class AccountActionState extends State<AccountAction> {
                   },
                   border: TableBorder.all(
                     color: Colors.grey,
-                    width: 0.5,
+                    width: 1,
                   ),
                   children: _buildTableRow(),
                 ),

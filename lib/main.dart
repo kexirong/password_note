@@ -17,10 +17,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     const title = '密码本子';
 
-    // final noteData = NoteData.getInstance();
+    var groups = hiveGetAllGroups();
+    var accounts = hiveGetAllAccounts();
+    var records = hiveGetRecords();
 
     return ChangeNotifierProvider(
-      create: (context) => AppData(),
+      create: (context) => AppData(groups: groups, accounts: accounts, records: records),
       child: MaterialApp(
         title: title,
         theme: ThemeData(
