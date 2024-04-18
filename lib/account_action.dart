@@ -70,6 +70,7 @@ class AccountActionState extends State<AccountAction> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
+      canPop: false,
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget._action == _Action.add ? '添加账号' : '编辑账号'),
@@ -157,12 +158,33 @@ class AccountActionState extends State<AccountAction> {
         ),
       ),
       onPopInvoked: (bool didPop) async {
-        bool? confirm = false;
+        if (didPop) return;
+        bool? doPop = false;
         if (!_saved) {
-          confirm = await showReturnConfirm();
+          doPop = await showDialog<bool>(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("提示"),
+                content: const Text("确认不保存退出?"),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text("取消"),
+                    onPressed: () => Navigator.pop(context, false), // 关闭对话框
+                  ),
+                  TextButton(
+                    child: const Text("确认"),
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         }
         if (!context.mounted) return;
-        if ((_saved || confirm!)) {
+        if ((_saved || doPop!)) {
           Navigator.pop(context);
         }
       },
@@ -428,27 +450,5 @@ class AccountActionState extends State<AccountAction> {
     return _saved = true;
   }
 
-  Future<bool?> showReturnConfirm() {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("提示"),
-          content: const Text("确认不保存退出?"),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("取消"),
-              onPressed: () => Navigator.of(context).pop(false), // 关闭对话框
-            ),
-            TextButton(
-              child: const Text("确认"),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+
 }

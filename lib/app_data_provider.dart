@@ -24,44 +24,55 @@ class AppData with ChangeNotifier {
     return _accounts.where((element) => element.groupID == groupID).toList();
   }
 
+  void recordChange(RecordType type, String itemID, ItemType itemType) {
+    _records.add(RecordMate(itemID, itemType, type));
+  }
+
   void noteGroupSetName(int index, String newName) {
     _groups[index].name = newName;
+    recordChange(RecordType.update, _groups[index].id, ItemType.group);
     notifyListeners();
   }
 
   void addNoteGroup(NoteGroup group) {
     _groups.add(group);
+    recordChange(RecordType.create, group.id, ItemType.group);
     notifyListeners();
   }
 
   void addNoteAccount(NoteAccount account) {
     account.groupID = _currentGroupID;
     _accounts.add(account);
+    recordChange(RecordType.create, account.id, ItemType.account);
     notifyListeners();
   }
 
-  void updateNoteAccount(int index, NoteAccount account) {
-    noteAccounts[index] = account;
+  void updateNoteAccount(NoteAccount account) {
+    // var index = noteAccounts.indexOf(account);
+
+
+    // int lIndex = _accounts.indexWhere((el) => (el.id == account.id));
+    // noteAccounts[lIndex] = account;
+    recordChange(RecordType.update, account.id, ItemType.account);
     notifyListeners();
   }
 
   void noteGroupRemoveAt(int index) {
-    _groups.removeAt(index);
+    var group = _groups.removeAt(index);
+    recordChange(RecordType.delete, group.id, ItemType.group);
     notifyListeners();
   }
 
   void noteAccountRemoveByID(String accountID) {
     int index = _accounts.indexWhere((el) => (el.id == accountID));
-    _accounts.removeAt(index);
+    var account= _accounts.removeAt(index);
+    recordChange(RecordType.delete, account.id, ItemType.account);
     notifyListeners();
   }
 
   void setIndex(int index) {
     if (index >= 0 && index < _groups.length) {
       _index = index;
-      if (kDebugMode) {
-        print("setIndex: $index");
-      }
       notifyListeners();
     }
   }

@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-// import 'package:password_note/util.dart';
+
 import 'note_data.dart';
 import 'account_action.dart';
+
 
 // import 'package:hive/hive.dart';
 
@@ -153,48 +154,49 @@ class GroupListWidget extends StatelessWidget {
               },
             );
           } else {
-            if (kDebugMode) {
-              print(Theme.of(context).colorScheme.secondary);
-            }
             return InkWell(
-                child: Container(
-                  margin: const EdgeInsets.only(left: 12, right: 12),
-                  padding: const EdgeInsets.only(top: 16, bottom: 16),
-                  decoration: BoxDecoration(
-                    border: Border(bottom: BorderSide(width: 1, color: Colors.grey.shade200)),
-                  ),
-                  child: Text(
-                    groups[index].name,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color:
-                          appData.index == index ? Theme.of(context).colorScheme.secondary : null,
-                    ),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+              // focusColor: Theme.of(context).colorScheme.inversePrimary,
+              // hoverColor: Theme.of(context).colorScheme.inversePrimary,
+              child: Container(
+                margin: const EdgeInsets.only(left: 12, right: 12),
+                padding: const EdgeInsets.only(top: 16, bottom: 16),
+                decoration: BoxDecoration(
+                  border: Border(bottom: BorderSide(width: 1, color: Colors.grey.shade200)),
                 ),
-                onTap: () {
-                  appData.setIndex(index);
-                },
-                onLongPress: () async {
-                  var action = await groupOption(groups[index], context);
+                child: Text(
+                  groups[index].name,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: appData.index == index
+                        ? Theme.of(context).colorScheme.inversePrimary
+                        : null,
+                  ),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              onTap: () {
+                appData.setIndex(index);
+              },
+              onLongPress: () async {
+                var action = await groupOption(groups[index], context);
 
-                  switch (action) {
-                    case 1:
-                      if (!context.mounted) return;
-                      var newName =
-                          await inputGroupName(noteGroupName: groups[index].name, context: context);
+                switch (action) {
+                  case 1:
+                    if (!context.mounted) return;
+                    var newName =
+                        await inputGroupName(noteGroupName: groups[index].name, context: context);
 
-                      if (newName != null && newName.isNotEmpty) {
-                        appData.noteGroupSetName(index,newName);
-                      }
+                    if (newName != null && newName.isNotEmpty) {
+                      appData.noteGroupSetName(index, newName);
+                    }
 
-                    case 2:
-                      appData.setIndex(index - 1);
-                      appData.noteGroupRemoveAt(index);
-                  }
-                });
+                  case 2:
+                    appData.setIndex(index - 1);
+                    appData.noteGroupRemoveAt(index);
+                }
+              },
+            );
           }
         },
       ),
@@ -249,16 +251,13 @@ class AccountListWidget extends StatelessWidget {
       child: ListView.builder(
         itemCount: accounts.length,
         itemBuilder: (BuildContext context, int index) {
-          if (kDebugMode) {
-            print("${accounts.length}:$index");
-          }
 
           final noteAccount = accounts[index];
           return InkWell(
             onTap: () async {
               var result = await showAccountDetail(noteAccount, context);
               if (result is NoteAccount) {
-                appData.updateNoteAccount(index, result);
+                appData.updateNoteAccount(result);
               }
             },
             child: Container(
@@ -358,7 +357,6 @@ class AccountListWidget extends StatelessWidget {
                             }),
                           );
                           if (!context.mounted) return;
-
                           Navigator.of(context).pop(result);
                         },
                       ))

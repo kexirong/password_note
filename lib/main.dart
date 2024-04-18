@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:password_note/note_data.dart';
 import 'home.dart';
 import 'hive.dart';
+import 'global.dart';
 
 void main() async {
   await hiveInit();
@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         home: const HomePage(title: title),
+        navigatorKey: navigatorKey,
       ),
     );
   }
