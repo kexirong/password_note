@@ -26,10 +26,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: title,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.blue,
-          ),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, primary: Colors.blue),
         ),
         home: const HomePage(title: title),
         navigatorKey: navigatorKey,

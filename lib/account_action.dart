@@ -34,7 +34,6 @@ class AccountActionState extends State<AccountAction> {
   @override
   void initState() {
     super.initState();
-    // _accountFields = <TextEditingHelper>[];
     TextEditingHelper helper = TextEditingHelper(2);
     helper.controllers[0] = TextEditingController(text: '名称');
     helper.controllers[1] = TextEditingController(text: widget.account.name);
@@ -73,6 +72,7 @@ class AccountActionState extends State<AccountAction> {
       canPop: false,
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.primary,
           title: Text(widget._action == _Action.add ? '添加账号' : '编辑账号'),
           actions: <Widget>[
             IconButton(
@@ -95,63 +95,67 @@ class AccountActionState extends State<AccountAction> {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(8),
                 child: Table(
                   columnWidths: const {
                     0: FlexColumnWidth(1.0),
-                    1: FlexColumnWidth(2.5),
+                    1: FlexColumnWidth(3.0),
                   },
                   border: TableBorder.all(
-                    color: Colors.grey,
+                    color: Theme.of(context).colorScheme.outline,
                     width: 1,
                   ),
                   children: _buildTableRow(),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                        flex: 1,
-                        child: OutlinedButton(
-                            onPressed: rndPassword,
-                            child: const Text(
-                              "随机密码",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 16),
-                            ))),
-                    Expanded(
-                        flex: 1,
-                        child: OutlinedButton(
-                          child: const Text(
-                            "清空所有",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          onPressed: () {
-                            const snackBar = SnackBar(
-                              content: Text('功能未实现'),
-                            );
+              OverflowBar(
+                alignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  OutlinedButton(
+                      onPressed: rndPassword,
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(
+                            const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+                      ),
+                      child: const Text(
+                        "随机密码",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16),
+                      )),
+                  OutlinedButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all(
+                          const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+                    ),
+                    onPressed: () {
+                      const snackBar = SnackBar(
+                        content: Text('功能未实现'),
+                      );
 
-                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          },
-                        )),
-                    Expanded(
-                        flex: 1,
-                        child: OutlinedButton(
-                          child: const Text(
-                            "添加条目",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          onPressed: () {
-                            _addItem();
-                            _saved = false;
-                          },
-                        ))
-                  ],
-                ),
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    },
+                    child: const Text(
+                      "清空所有",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  OutlinedButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all(
+                          const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+                    ),
+                    onPressed: () {
+                      _addItem();
+                      _saved = false;
+                    },
+                    child: const Text(
+                      "添加条目",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
               )
             ],
           ),
@@ -237,13 +241,13 @@ class AccountActionState extends State<AccountAction> {
                   Expanded(
                     flex: 1,
                     child: IconButton(
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
+                      // splashColor: Colors.transparent,
+                      // highlightColor: Colors.transparent,
                       padding: const EdgeInsets.all(0),
-                      icon: const Icon(
+                      icon:   Icon(
                         Icons.highlight_off,
                         size: 20,
-                        color: Colors.grey,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                       onPressed: () {
                         if (_accountFields[index].controllers[1].text != '') {
@@ -306,9 +310,9 @@ class AccountActionState extends State<AccountAction> {
               ),
               children: <TextSpan>[
                 TextSpan(
-                  text: ' [${slider.truncate()}]',
-                  style: const TextStyle(
-                    color: Colors.grey,
+                  text: '[${slider.truncate()}]',
+                  style:   TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
                     fontSize: 18,
                     fontWeight: FontWeight.normal,
                   ),
@@ -449,6 +453,4 @@ class AccountActionState extends State<AccountAction> {
 
     return _saved = true;
   }
-
-
 }

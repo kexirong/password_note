@@ -8,9 +8,7 @@ import 'package:hive/hive.dart';
 import 'hive.dart';
 import 'note_data.dart';
 import 'account_action.dart';
-
-
-
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 part 'app_data_provider.dart';
 
@@ -27,6 +25,7 @@ class HomePage extends StatelessWidget {
     final appData = Provider.of<AppData>(context);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(title),
         actions: <Widget>[
           IconButton(
@@ -134,7 +133,7 @@ class GroupListWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border(
-          right: BorderSide(color: Colors.grey.shade300, width: 1),
+          right: BorderSide(color: Theme.of(context).colorScheme.outlineVariant, width: 1),
         ),
       ),
       child: ListView.builder(
@@ -143,9 +142,9 @@ class GroupListWidget extends StatelessWidget {
           if (index == groups.length) {
             return IconButton(
               padding: const EdgeInsets.all(8),
-              icon: const Icon(
+              icon: Icon(
                 Icons.add,
-                color: Colors.black54,
+                color: Theme.of(context).colorScheme.secondary,
               ),
               onPressed: () async {
                 var groupName = await inputGroupName(context: context);
@@ -158,18 +157,17 @@ class GroupListWidget extends StatelessWidget {
           } else {
             return InkWell(
               child: Container(
-                margin: const EdgeInsets.only(left: 12, right: 12),
+                margin: const EdgeInsets.only(left: 8, right: 8),
                 padding: const EdgeInsets.only(top: 16, bottom: 16),
                 decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(width: 1, color: Colors.grey.shade200)),
+                  border: Border(
+                      bottom: BorderSide(width: 1, color: Theme.of(context).colorScheme.outline)),
                 ),
                 child: Text(
                   groups[index].name,
                   style: TextStyle(
                     fontSize: 16,
-                    color: appData.index == index
-                        ? Theme.of(context).colorScheme.inversePrimary
-                        : null,
+                    color: appData.index == index ? Theme.of(context).colorScheme.primary : null,
                   ),
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
@@ -244,16 +242,11 @@ class AccountListWidget extends StatelessWidget {
     }
 
     var accounts = appData.noteAccounts;
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(right: BorderSide(color: Colors.grey.shade300, width: 0.5)),
-      ),
-      child: ListView.builder(
-        itemCount: accounts.length,
-        itemBuilder: (BuildContext context, int index) {
-
-          final noteAccount = accounts[index];
-          return InkWell(
+    return ListView.builder(
+      itemCount: accounts.length,
+      itemBuilder: (BuildContext context, int index) {
+        final noteAccount = accounts[index];
+        return InkWell(
             onTap: () async {
               var result = await showAccountDetail(noteAccount, context);
               if (result is NoteAccount) {
@@ -261,35 +254,75 @@ class AccountListWidget extends StatelessWidget {
               }
             },
             child: Container(
-              margin: const EdgeInsets.only(left: 12, right: 12),
-              padding: const EdgeInsets.only(top: 16, bottom: 16),
-              decoration: BoxDecoration(
-                  border: Border(
+              clipBehavior: Clip.hardEdge,
+              decoration: const BoxDecoration(),
+              child: Slidable(
+                // The end action pane is the one at the right or the bottom side.
+                endActionPane: ActionPane(
+                  motion: const ScrollMotion(),
+                  children: [
+                    SlidableAction(
+                      onPressed: (_) async {
+                        var result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return AccountAction(noteAccount);
+                          }),
+                        );
+
+                        if (result is NoteAccount) {
+                          appData.updateNoteAccount(result);
+                        }
+                      },
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.surface,
+                      icon: Icons.edit,
+                      label: '编辑',
+                    ),
+                    SlidableAction(
+                      onPressed: (_) {
+                        appData.noteAccountRemoveByID(noteAccount.id);
+                      },
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                      foregroundColor: Theme.of(context).colorScheme.surface,
+                      icon: Icons.delete,
+                      label: '删除',
+                    ),
+                  ],
+                ),
+
+                child: Container(
+                  margin: const EdgeInsets.only(left: 8, right: 8),
+                  padding: const EdgeInsets.only(top: 16, bottom: 16),
+                  decoration: BoxDecoration(
+                    border: Border(
                       bottom: BorderSide(
-                width: 1,
-                color: Colors.grey.shade200,
-              ))),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Text(noteAccount.name,
-                        textAlign: TextAlign.left, overflow: TextOverflow.ellipsis),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Text(noteAccount.account ?? '',
-                          textAlign: TextAlign.left, overflow: TextOverflow.ellipsis),
+                        width: 1,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                   ),
-                ],
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child: Text(noteAccount.name,
+                            textAlign: TextAlign.left, overflow: TextOverflow.ellipsis),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(noteAccount.account ?? '',
+                              textAlign: TextAlign.left, overflow: TextOverflow.ellipsis),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          );
-        },
-      ),
+            ));
+      },
     );
   }
 
@@ -308,13 +341,13 @@ class AccountListWidget extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: IconButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
+                  // splashColor: Theme.of(context).colorScheme.outline,
+                  // highlightColor: Theme.of(context).colorScheme.outline,
                   padding: const EdgeInsets.all(0),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.content_copy,
                     size: 20,
-                    color: Colors.grey,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: v));
