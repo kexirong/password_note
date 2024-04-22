@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:password_note/account_search.dart';
 
 import 'package:provider/provider.dart';
 
@@ -27,34 +28,44 @@ class HomePage extends StatelessWidget {
         title: Text(title),
         actions: <Widget>[
           IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () async {
-                if (appData.noteGroups.isEmpty) {
-                  const snackBar = SnackBar(
-                    content: Text('无分组，先创建分组'),
-                  );
+            icon: const Icon(Icons.add),
+            onPressed: () async {
+              if (appData.noteGroups.isEmpty) {
+                const snackBar = SnackBar(
+                  content: Text('无分组，先创建分组'),
+                );
 
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-                  var groupName = await inputGroupName(context: context);
-                  if (groupName != null && groupName.isNotEmpty) {
-                    appData.addNoteGroup(NoteGroup(groupName));
-                    appData.setIndex(appData.noteGroups.length - 1);
-                  }
-                } else {
-                  var result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) {
-                      return AccountAction(NoteAccount(''));
-                    }),
-                  );
-
-                  if (result is NoteAccount) {
-                    appData.addNoteAccount(result);
-                  }
+                var groupName = await inputGroupName(context: context);
+                if (groupName != null && groupName.isNotEmpty) {
+                  appData.addNoteGroup(NoteGroup(groupName));
+                  appData.setIndex(appData.noteGroups.length - 1);
                 }
+              } else {
+                var result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return AccountAction(NoteAccount(''));
+                  }),
+                );
+
+                if (result is NoteAccount) {
+                  appData.addNoteAccount(result);
+                }
+              }
+            },
+          ),
+          IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return const AccountSearch();
+                  }),
+                );
               }),
-          IconButton(icon: const Icon(Icons.search), onPressed: () {}),
           IconButton(icon: const Icon(Icons.menu), onPressed: () {}),
         ],
       ),

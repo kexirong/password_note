@@ -9,7 +9,8 @@ import 'app_data_provider.dart';
 import 'note_data.dart';
 
 class AccountListWidget extends StatelessWidget {
-  const AccountListWidget({super.key});
+  const AccountListWidget({super.key, String? filter}) : _filter = filter;
+  final String? _filter;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,19 @@ class AccountListWidget extends StatelessWidget {
       print("%%%%%%%%%%%%%%%%%%%%%%%%%%AccountList rebuild%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
     }
 
-    var accounts = appData.noteAccounts;
+    List<NoteAccount> accounts;
+    if (_filter == null) {
+      accounts = appData.noteAccounts;
+      print("11111111111111");
+    } else if (_filter.isNotEmpty) {
+      accounts =
+          appData.allNoteAccounts.where((element) => element.name.contains(_filter)).toList();
+      print("222222222222222222222222");
+    } else {
+      accounts = appData.allNoteAccounts;
+      print("33333333333333333333333333");
+    }
+
     return ListView.builder(
       itemCount: accounts.length,
       itemBuilder: (BuildContext context, int index) {

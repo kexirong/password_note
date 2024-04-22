@@ -31,6 +31,8 @@ class AppData extends ChangeNotifier {
 
   List<NoteAccount> get noteAccounts => getNoteAccountsByGroupID(_currentGroupID);
 
+  List<NoteAccount> get allNoteAccounts => _accounts;
+
   List<NoteAccount> getNoteAccountsByGroupID(String? groupID) {
     return _accounts.where((element) => element.groupID == groupID).toList();
   }
