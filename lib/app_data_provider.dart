@@ -1,4 +1,9 @@
-part of 'home.dart';
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'hive.dart';
+import 'note_data.dart';
 
 class AppData extends ChangeNotifier {
   AppData({List<NoteGroup>? groups, List<NoteAccount>? accounts, List<RecordMate>? records})
