@@ -22,14 +22,11 @@ class AccountListWidget extends StatelessWidget {
     List<NoteAccount> accounts;
     if (_filter == null) {
       accounts = appData.noteAccounts;
-      print("11111111111111");
     } else if (_filter.isNotEmpty) {
       accounts =
           appData.allNoteAccounts.where((element) => element.name.contains(_filter)).toList();
-      print("222222222222222222222222");
     } else {
       accounts = appData.allNoteAccounts;
-      print("33333333333333333333333333");
     }
 
     return ListView.builder(

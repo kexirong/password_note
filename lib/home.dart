@@ -16,6 +16,7 @@ class HomePage extends StatelessWidget {
 
   final String title;
 
+
   @override
   Widget build(BuildContext context) {
     if (kDebugMode) {
@@ -23,9 +24,10 @@ class HomePage extends StatelessWidget {
     }
     final appData = Provider.of<AppData>(context);
     return Scaffold(
+
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(title),
+        // title: Text(title),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.add),
@@ -66,7 +68,12 @@ class HomePage extends StatelessWidget {
                   }),
                 );
               }),
-          IconButton(icon: const Icon(Icons.menu), onPressed: () {}),
+          // IconButton(
+          //   icon: const Icon(Icons.menu),
+          //   onPressed: () {
+          //     scaffoldKey.currentState!.openEndDrawer();
+          //   },
+          // ),
         ],
       ),
       body: const Row(
@@ -78,6 +85,72 @@ class HomePage extends StatelessWidget {
           Expanded(
             flex: 3,
             child: AccountListWidget(),
+          ),
+        ],
+      ),
+     drawer: const EndDrawer(),
+    );
+  }
+}
+
+class EndDrawer extends StatelessWidget {
+  const EndDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+
+
+    void onItemTapped(int index) {
+
+    }
+
+    return Drawer(
+      // Add a ListView to the drawer. This ensures the user can scroll
+      // through the options in the drawer if there isn't enough vertical
+      // space to fit everything.
+      child: ListView(
+        // Important: Remove any padding from the ListView.
+        padding: EdgeInsets.zero,
+        children: [
+          const DrawerHeader(
+            padding: EdgeInsets.fromLTRB(16.0, 48.0, 16.0, 8.0),
+            decoration: BoxDecoration(
+
+            ),
+            child: Text('设置'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.password),
+            title: const Text('加密'),
+
+            onTap: () {
+              // Update the state of the app
+              onItemTapped(0);
+              // Then close the drawer
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.sync),
+            title: const Text('同步'),
+
+            onTap: () {
+              // Update the state of the app
+              onItemTapped(1);
+              // Then close the drawer
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.info),
+            title: const Text('关于'),
+
+            onTap: () {
+              // Update the state of the app
+              onItemTapped(2);
+              // Then close the drawer
+              Navigator.pop(context);
+            },
           ),
         ],
       ),
