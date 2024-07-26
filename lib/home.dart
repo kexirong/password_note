@@ -10,6 +10,7 @@ import 'note_data.dart';
 import 'account_action.dart';
 
 import 'app_data_provider.dart';
+import 'setting_password.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key, required this.title});
@@ -24,7 +25,6 @@ class HomePage extends StatelessWidget {
     }
     final appData = Provider.of<AppData>(context);
     return Scaffold(
-
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         // title: Text(title),
@@ -88,7 +88,7 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-     drawer: const EndDrawer(),
+      drawer: const EndDrawer(),
     );
   }
 }
@@ -98,11 +98,7 @@ class EndDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
-    void onItemTapped(int index) {
-
-    }
+    void onItemTapped(int index) {}
 
     return Drawer(
       // Add a ListView to the drawer. This ensures the user can scroll
@@ -114,26 +110,30 @@ class EndDrawer extends StatelessWidget {
         children: [
           const DrawerHeader(
             padding: EdgeInsets.fromLTRB(16.0, 48.0, 16.0, 8.0),
-            decoration: BoxDecoration(
-
-            ),
+            decoration: BoxDecoration(),
             child: Text('设置'),
           ),
           ListTile(
             leading: const Icon(Icons.password),
             title: const Text('加密'),
-
             onTap: () {
               // Update the state of the app
               onItemTapped(0);
+              print("object");
+
               // Then close the drawer
               Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return const SettingPasswordForm();
+                }),
+              );
             },
           ),
           ListTile(
             leading: const Icon(Icons.sync),
             title: const Text('同步'),
-
             onTap: () {
               // Update the state of the app
               onItemTapped(1);
@@ -144,7 +144,6 @@ class EndDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.info),
             title: const Text('关于'),
-
             onTap: () {
               // Update the state of the app
               onItemTapped(2);

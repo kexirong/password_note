@@ -52,3 +52,10 @@ List<RecordMate> hiveGetRecords() {
   }
   return records;
 }
+
+String? hiveGetStringSecret() {
+  var settingBox = Hive.box<String>(hiveSettingBox);
+
+  var secret = settingBox.get('secret');
+  return secret;
+}
