@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'hive.dart';
 
 class SettingPasswordForm extends StatefulWidget {
   const SettingPasswordForm({super.key});
@@ -9,24 +11,22 @@ class SettingPasswordForm extends StatefulWidget {
   }
 }
 
-// Create a corresponding State class.
-// This class holds data related to the form.
 class MyCustomFormState extends State<SettingPasswordForm> {
-  // Create a global key that uniquely identifies the Form widget
-  // and allows validation of the form.
-  //
-  // Note: This is a GlobalKey<FormState>,
-  // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
+    var settingBox = Hive.box<String>(hiveSettingBox);
+    var secret = settingBox.get('secret');
+    var password = TextEditingController(text: '');
+    var newPassword = TextEditingController(text: 'newSecret');
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme
+            .of(context)
+            .colorScheme
+            .primary,
         title: const Text('加密密码'),
-
       ),
       body: Form(
         key: _formKey,
@@ -34,26 +34,31 @@ class MyCustomFormState extends State<SettingPasswordForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
-              // The validator receives the text that the user has entered.
+              decoration: const InputDecoration(labelText: "原密码"),
               validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
+                if (secret != null && secret.isNotEmpty) {
+                  if (value == null || value.isEmpty) {
+                    return '请输入原密码';
+                  } else if (value != secret) {
+                    return '原密码错误';
+                  }
                 }
                 return null;
               },
+              controller: password,
+            ),
+            TextFormField(
+              decoration: const InputDecoration(labelText: "密码"),
+              controller: newPassword,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed: () {
-                  // Validate returns true if the form is valid, or false otherwise.
-                  if (_formKey.currentState!.validate()) {
-                    // If the form is valid, display a snackbar. In the real world,
-                    // you'd often call a server or save the information in a database.
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Processing Data')),
-                    );
+                  if (!_formKey.currentState!.validate()) {
+                    return;
                   }
+
                 },
                 child: const Text('Submit'),
               ),

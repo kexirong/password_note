@@ -119,7 +119,9 @@ class EndDrawer extends StatelessWidget {
             onTap: () {
               // Update the state of the app
               onItemTapped(0);
-              print("object");
+              if (kDebugMode) {
+                print("object");
+              }
 
               // Then close the drawer
               Navigator.pop(context);

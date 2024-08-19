@@ -28,12 +28,14 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  encrypt: ^5.0.3
   flutter:
     sdk: flutter
   flutter_slidable: ^3.1.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   provider: ^6.1.2
+  webdav_client: ^1.2.2
 
 
   # The following adds the Cupertino Icons font to your application.
