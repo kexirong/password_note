@@ -58,7 +58,7 @@ class MyCustomFormState extends State<SettingPasswordForm> {
                   if (!_formKey.currentState!.validate()) {
                     return;
                   }
-
+                  hiveSetStringSecret(newPassword.text);
                 },
                 child: const Text('Submit'),
               ),

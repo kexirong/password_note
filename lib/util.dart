@@ -33,3 +33,7 @@ String uuid() {
       '${_intToHex[rands[i++]]}${_intToHex[rands[i++]]}'
       '${_intToHex[rands[i++]]}${_intToHex[rands[i++]]}';
 }
+
+bool isNotEmptyString(String? str) {
+  return str != null && str.isNotEmpty;
+}
