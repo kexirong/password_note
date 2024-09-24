@@ -65,8 +65,9 @@ class AppData extends ChangeNotifier {
     account.groupID = _currentGroupID;
     _accounts.add(account);
     recordChange(RecordType.create, account.id, ItemType.account);
-    var accountBox = Hive.box<String>(hiveNoteAccountBox);
-    accountBox.put(account.id, json.encode(account.toJson()));
+    hivePutAccount(account);
+    // var accountBox = Hive.box<String>(hiveNoteAccountBox);
+    // accountBox.put(account.id, json.encode(account.toJson()));
     notifyListeners();
   }
 

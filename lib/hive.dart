@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:crypto/crypto.dart';
+
+import 'package:flutter/foundation.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'note_data.dart';
@@ -33,14 +34,18 @@ List<NoteAccount> hiveGetAllAccounts() {
   var accounts = <NoteAccount>[];
   var accountBox = Hive.box<String>(hiveNoteAccountBox);
   var secret = hiveGetStringSecret();
-  // var secretId = md5.convert(utf8.encode(secret ?? "")).toString();
+
   for (var element in accountBox.values) {
+
     var jsonMap = json.decode(element) as Map<String, dynamic>;
     if (jsonMap.containsKey('cipher')) {
       try {
         var deSting = decrypt(secret!, jsonMap);
         jsonMap = json.decode(deSting) as Map<String, dynamic>;
       } catch (e) {
+        if (kDebugMode) {
+            rethrow;
+        }
         continue;
       }
     }
@@ -48,6 +53,25 @@ List<NoteAccount> hiveGetAllAccounts() {
     accounts.add(NoteAccount.fromJson(jsonMap));
   }
   return accounts;
+}
+
+void hivePutAccount(NoteAccount account) {
+  var secret = hiveGetStringSecret();
+
+  _hivePutAccount(secret ?? "", account);
+}
+
+void _hivePutAccount(String secret, NoteAccount account) {
+  var accountBox = Hive.box<String>(hiveNoteAccountBox);
+  if (secret.isNotEmpty) {
+    var accountE = encrypt(secret, json.encode(account.toJson()));
+    accountE['id'] = account.id;
+    accountE['updated_at'] = account.updatedAt;
+    accountE['encrypt_at'] = DateTime.now().millisecondsSinceEpoch;
+    accountBox.put(account.id, json.encode(accountE));
+  } else {
+    accountBox.put(account.id, json.encode(account));
+  }
 }
 
 List<RecordMate> hiveGetRecords() {
@@ -70,20 +94,10 @@ String? hiveGetStringSecret() {
 
 void hiveSetStringSecret(String secret) {
   var settingBox = Hive.box<String>(hiveSettingBox);
-  var accountBox = Hive.box<String>(hiveNoteAccountBox);
-
   var accounts = hiveGetAllAccounts();
 
   for (var account in accounts) {
-    if (secret.isNotEmpty) {
-      var accountE = encrypt(secret, json.encode(account.toJson()));
-      accountE['id'] = account.id;
-      accountE['updated_at'] = account.updatedAt;
-      accountE['encrypt_at'] = DateTime.now().millisecondsSinceEpoch;
-      accountBox.put(account.id, json.encode(accountE));
-    } else {
-      accountBox.put(account.id, json.encode(account));
-    }
+    _hivePutAccount(secret ?? "", account);
   }
   settingBox.put('secret', secret);
 }

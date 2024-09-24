@@ -19,7 +19,7 @@ class MyCustomFormState extends State<SettingPasswordForm> {
     var settingBox = Hive.box<String>(hiveSettingBox);
     var secret = settingBox.get('secret');
     var password = TextEditingController(text: '');
-    var newPassword = TextEditingController(text: 'newSecret');
+    var newPassword = TextEditingController(text: '');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme

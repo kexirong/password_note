@@ -20,9 +20,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (kDebugMode) {
-      print("%%%%%%%%%%%%%%%%%%%%%%%%%%HomePageState rebuild%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-    }
     final appData = Provider.of<AppData>(context);
     return Scaffold(
       appBar: AppBar(
@@ -68,12 +65,6 @@ class HomePage extends StatelessWidget {
                   }),
                 );
               }),
-          // IconButton(
-          //   icon: const Icon(Icons.menu),
-          //   onPressed: () {
-          //     scaffoldKey.currentState!.openEndDrawer();
-          //   },
-          // ),
         ],
       ),
       body: const Row(

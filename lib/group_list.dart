@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -52,9 +51,7 @@ class GroupListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (kDebugMode) {
-      print("%%%%%%%%%%%%%%%%%%%%%%%%%%GroupListWidget rebuild%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-    }
+
     final appData = Provider.of<AppData>(context);
 
     var groups = appData.noteGroups;

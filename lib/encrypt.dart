@@ -12,7 +12,7 @@ Key keyFromPassword(String password) {
   return Key(Uint8List.fromList(pwdSha.bytes));
 }
 
-Map<String, dynamic> encrypt(String password, plain) {
+Map<String, dynamic> encrypt(String password, String plain) {
   final key = keyFromPassword(password);
   final iv = IV.fromLength(16);
 
@@ -26,18 +26,20 @@ Map<String, dynamic> encrypt(String password, plain) {
     "cipher": 'AES',
     "mode": AESMode.cbc.name,
     "iv": iv.base64,
-    // "key_id": md5.convert(utf8.encode(pwd)).toString(),
     "data": encrypted.base64,
   };
 }
 
 String decrypt(String pwd, Map<String, dynamic> input) {
-  final key = keyFromPassword(pwd);
-  final iv = IV.fromBase64(input['iv']);
-  final encrypter = Encrypter(AES(key, mode: AESMode.values[input['mode']], padding: null));
-  final decrypted = encrypter.decrypt(
+  var key = keyFromPassword(pwd);
+  var iv = IV.fromBase64(input['iv']);
+  var mode = AESMode.values.firstWhere((el) => el.name == input['mode']);
+
+  var encrypter = Encrypter(AES(key, mode: mode));
+  var decrypted = encrypter.decrypt64(
     input['data'],
     iv: iv,
   );
+
   return decrypted;
 }

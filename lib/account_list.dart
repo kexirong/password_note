@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -15,9 +14,6 @@ class AccountListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appData = Provider.of<AppData>(context);
-    if (kDebugMode) {
-      print("%%%%%%%%%%%%%%%%%%%%%%%%%%AccountList rebuild%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-    }
 
     List<NoteAccount> accounts;
     if (_filter == null) {
