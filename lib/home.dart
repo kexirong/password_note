@@ -11,6 +11,7 @@ import 'account_action.dart';
 
 import 'app_data_provider.dart';
 import 'setting_password.dart';
+import 'setting_sync.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key, required this.title});
@@ -20,6 +21,9 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print("###################build home###########################");
+    }
     final appData = Provider.of<AppData>(context);
     return Scaffold(
       appBar: AppBar(
@@ -89,7 +93,7 @@ class EndDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void onItemTapped(int index) {}
+
 
     return Drawer(
       // Add a ListView to the drawer. This ensures the user can scroll
@@ -109,10 +113,6 @@ class EndDrawer extends StatelessWidget {
             title: const Text('加密'),
             onTap: () {
               // Update the state of the app
-              onItemTapped(0);
-              if (kDebugMode) {
-                print("object");
-              }
 
               // Then close the drawer
               Navigator.pop(context);
@@ -124,22 +124,27 @@ class EndDrawer extends StatelessWidget {
               );
             },
           ),
+          //
           ListTile(
             leading: const Icon(Icons.sync),
             title: const Text('同步'),
             onTap: () {
               // Update the state of the app
-              onItemTapped(1);
               // Then close the drawer
               Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return const SettingSyncForm();
+                }),
+              );
             },
           ),
           ListTile(
             leading: const Icon(Icons.info),
             title: const Text('关于'),
             onTap: () {
-              // Update the state of the app
-              onItemTapped(2);
+
               // Then close the drawer
               Navigator.pop(context);
             },

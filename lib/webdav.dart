@@ -1,45 +1,47 @@
-import 'package:webdav_client/webdav_client.dart';
+import 'dart:typed_data';
+import 'package:webdav_client/webdav_client.dart' as webdav;
+import 'package:path/path.dart' as p;
 
 class WebdavClient {
-  String url;
-  String user;
-  String password;
-  bool debug;
+  final webdav.Client _client;
+  String rootPath = '';
 
-  WebdavClient(this.url, this.user, this.password, {this.debug = false});
-
-  Client _getClient() {
-    var client = newClient(
-      url,
-      user: user,
-      password: password,
-      debug: debug,
-    );
-
-    client.setHeaders({'accept-charset': 'utf-8'});
-
-    return client;
+  WebdavClient(
+    String url,
+    String user,
+    String password, {
+    String path = '',
+    debug = false,
+  })  : _client = webdav.newClient(
+          url,
+          user: user,
+          password: password,
+          debug: debug,
+        ),
+        rootPath = p.join('/', path) {
+    _client.setHeaders({'accept-charset': 'utf-8'});
+    _client.setConnectTimeout(8000);
+    _client.setSendTimeout(8000);
+    _client.setReceiveTimeout(8000);
   }
 
-  Future<List<String>> _getData(String name) async {
+  Future<List<String>> getData(String name) async {
     var result = <String>[];
-    var client = _getClient();
-    var data = await client.readDir('');
+    var data = await _client.readDir('');
     for (var i in data) {
-      if (i.name!.contains(name)) {
-        var bytes = await client.read(i.path!);
+      if (i.isDir != null && !i.isDir! && i.name!.startsWith(name)) {
+        var bytes = await _client.read(i.path!);
         result.add(String.fromCharCodes(bytes));
       }
     }
-
     return result;
   }
 
-  Future<List<String>> getGroupData(String name) async {
-    return _getData('group');
+  void upData(String name, String data, {String? path}) {
+    path ??= rootPath;
+    var fPath = p.join(path, name);
+    _client.write(fPath, Uint8List.fromList(data.codeUnits));
   }
 
-  Future<List<String>> getAccountData(String name) async {
-    return _getData('account');
-  }
+  webdav.Client get client => _client;
 }

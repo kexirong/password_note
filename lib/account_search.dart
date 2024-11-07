@@ -10,7 +10,7 @@ class AccountSearch extends StatefulWidget {
 }
 
 class AccountSearchState extends State<AccountSearch> {
-  String _filter='';
+  String _filter = '';
 
   @override
   Widget build(BuildContext context) {

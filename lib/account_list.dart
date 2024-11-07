@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -7,12 +8,17 @@ import 'account_action.dart';
 import 'app_data_provider.dart';
 import 'note_data.dart';
 
+
+
 class AccountListWidget extends StatelessWidget {
   const AccountListWidget({super.key, String? filter}) : _filter = filter;
   final String? _filter;
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print("###################build Account###########################");
+    }
     final appData = Provider.of<AppData>(context);
 
     List<NoteAccount> accounts;

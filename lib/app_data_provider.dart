@@ -47,6 +47,7 @@ class AppData extends ChangeNotifier {
   void noteGroupSetName(int index, String newName) {
     var g = _groups[index];
     g.name = newName;
+    g.updatedAt = DateTime.now().millisecondsSinceEpoch;
     recordChange(RecordType.update, _groups[index].id, ItemType.group);
     var groupBox = Hive.box<String>(hiveNoteGroupBox);
     groupBox.put(g.id, json.encode(g.toJson()));
@@ -72,11 +73,13 @@ class AppData extends ChangeNotifier {
   }
 
   void updateNoteAccount(NoteAccount account) {
-    notifyListeners();
+    account.updatedAt = DateTime.now().millisecondsSinceEpoch;
 
     recordChange(RecordType.update, account.id, ItemType.account);
-    var accountBox = Hive.box<String>(hiveNoteAccountBox);
-    accountBox.put(account.id, json.encode(account.toJson()));
+    hivePutAccount(account);
+    // var accountBox = Hive.box<String>(hiveNoteAccountBox);
+    // accountBox.put(account.id, json.encode(account.toJson()));
+    notifyListeners();
   }
 
   void noteGroupRemoveAt(int index) {
