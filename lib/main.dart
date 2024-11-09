@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:password_note/util.dart';
 import 'package:provider/provider.dart';
 import 'app_data_provider.dart';
 import 'home.dart';
@@ -11,6 +12,10 @@ void main() async {
 
   runApp(const MyApp());
   var settingBox = Hive.box<String>(hiveSettingBox);
+  var deviceID = settingBox.get('device_id');
+  if (deviceID == null) {
+    settingBox.put('device_id', uuid());
+  }
 
   var webdavUrl = settingBox.get('webdav_url', defaultValue: '')!;
   var webdavUser = settingBox.get('webdav_user', defaultValue: '')!;

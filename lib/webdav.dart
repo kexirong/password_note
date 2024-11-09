@@ -25,7 +25,19 @@ class WebdavClient {
     _client.setReceiveTimeout(8000);
   }
 
-  Future<List<String>> getData(String name) async {
+  Future<List<String>> list({String? path}) async {
+    path ??= rootPath;
+    var result = <String>[];
+    var data = await _client.readDir(path);
+    for (var i in data) {
+      if (i.name != null) {
+        result.add(i.name!);
+      }
+    }
+    return result;
+  }
+
+  Future<List<String>> download(String name, {String? path}) async {
     var result = <String>[];
     var data = await _client.readDir('');
     for (var i in data) {
@@ -37,10 +49,16 @@ class WebdavClient {
     return result;
   }
 
-  void upData(String name, String data, {String? path}) {
+  Future<void> upload(String name, String data, {String? path}) async {
     path ??= rootPath;
     var fPath = p.join(path, name);
-    _client.write(fPath, Uint8List.fromList(data.codeUnits));
+    await _client.write(fPath, Uint8List.fromList(data.codeUnits));
+  }
+
+  Future<void> remove(String name, {String? path}) async {
+    path ??= rootPath;
+    var fPath = p.join(path, name);
+    return await _client.removeAll(fPath);
   }
 
   webdav.Client get client => _client;

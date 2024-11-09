@@ -1,7 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
-
 import 'package:hive_flutter/hive_flutter.dart';
 import 'note_data.dart';
 import 'encrypt.dart';
@@ -41,14 +38,8 @@ List<NoteAccount> hiveGetAllAccounts() {
     if (jsonMap.containsKey('cipher')) {
       try {
         var deSting = decrypt(secret!, jsonMap);
-        if (kDebugMode) {
-          print(deSting);
-        }
         jsonMap = json.decode(deSting) as Map<String, dynamic>;
       } catch (e) {
-        if (kDebugMode) {
-          rethrow;
-        }
         continue;
       }
     }
@@ -84,10 +75,6 @@ List<RecordMate> hiveGetRecords() {
   for (var element in recordBox.values) {
     var jsonMap = json.decode(element);
     records.add(RecordMate.fromJson(jsonMap));
-    if (kDebugMode) {
-      print(element);
-      print(RecordMate.fromJson(jsonMap).recordType.name);
-    }
   }
   return records;
 }

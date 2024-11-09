@@ -67,8 +67,7 @@ class AppData extends ChangeNotifier {
     _accounts.add(account);
     recordChange(RecordType.create, account.id, ItemType.account);
     hivePutAccount(account);
-    // var accountBox = Hive.box<String>(hiveNoteAccountBox);
-    // accountBox.put(account.id, json.encode(account.toJson()));
+
     notifyListeners();
   }
 
@@ -77,8 +76,7 @@ class AppData extends ChangeNotifier {
 
     recordChange(RecordType.update, account.id, ItemType.account);
     hivePutAccount(account);
-    // var accountBox = Hive.box<String>(hiveNoteAccountBox);
-    // accountBox.put(account.id, json.encode(account.toJson()));
+
     notifyListeners();
   }
 

@@ -37,9 +37,6 @@ class SyncWebdav {
         return;
       }
       isRunning = true;
-      if (kDebugMode) {
-        print(p.join('/', 'Note'));
-      }
       var list = await _client.client.readDir(p.join('/', 'Note'));
       for (var f in list) {
         if (kDebugMode) {
@@ -55,13 +52,13 @@ class SyncWebdav {
     }
   }
 
-  Future<List<String>> getGroupData(String name) async {
-    return _client.getData('group');
-  }
-
-  Future<List<String>> getAccountData(String name) async {
-    return _client.getData('account');
-  }
+  // Future<List<String>> getGroupData(String name) async {
+  //   return _client.getData('group');
+  // }
+  //
+  // Future<List<String>> getAccountData(String name) async {
+  //   return _client.getData('account');
+  // }
 }
 
 var syncWebdav = SyncWebdav();
