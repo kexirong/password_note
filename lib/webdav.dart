@@ -4,6 +4,7 @@ import 'package:path/path.dart' as p;
 
 class WebdavClient {
   final webdav.Client _client;
+
   String rootPath = '';
 
   WebdavClient(
@@ -20,9 +21,10 @@ class WebdavClient {
         ),
         rootPath = p.join('/', path) {
     _client.setHeaders({'accept-charset': 'utf-8'});
-    _client.setConnectTimeout(8000);
-    _client.setSendTimeout(8000);
-    _client.setReceiveTimeout(8000);
+    client.setHeaders({'content-type': 'text/html'});
+    _client.setConnectTimeout(30000);
+    _client.setSendTimeout(5000);
+    _client.setReceiveTimeout(5000);
   }
 
   Future<List<String>> list({String? path}) async {
@@ -37,16 +39,12 @@ class WebdavClient {
     return result;
   }
 
-  Future<List<String>> download(String name, {String? path}) async {
-    var result = <String>[];
-    var data = await _client.readDir('');
-    for (var i in data) {
-      if (i.isDir != null && !i.isDir! && i.name!.startsWith(name)) {
-        var bytes = await _client.read(i.path!);
-        result.add(String.fromCharCodes(bytes));
-      }
-    }
-    return result;
+  Future<String> download(String name, {String? path}) async {
+    path ??= rootPath;
+    var fPath = p.join(path, name);
+
+    var bytes = await _client.read(fPath);
+    return String.fromCharCodes(bytes);
   }
 
   Future<void> upload(String name, String data, {String? path}) async {

@@ -4,7 +4,7 @@ enum RecordType { create, update, delete }
 
 enum ItemType { group, account }
 
-typedef ID = String;
+// typedef ID = String;
 
 class RecordMate {
   String id;
@@ -90,4 +90,38 @@ class NoteAccount {
     json.addAll(extendField);
     return json;
   }
+}
+
+Map<String, RecordMate> zipRecords(List<RecordMate> records) {
+  Map<String, RecordMate> recs = {};
+  for (var rec in records) {
+    var item = recs[rec.id];
+    if (item == null) {
+      recs[rec.id] = rec;
+      continue;
+    }
+
+    if (item.recordType.index > rec.recordType.index) {
+      continue;
+    }
+
+    recs[rec.id] = rec;
+  }
+  return recs;
+}
+
+List< RecordMate> diffRecords(Map<String, RecordMate>  records1,Map<String, RecordMate>  records2) {
+   List<RecordMate> recs = [];
+  for (var key in records2.keys) {
+    var item = records1[key];
+    if (item == null) {
+      recs.add(records2[key]!);
+      continue;
+    }
+    if (item.timestamp > records2[key]!.timestamp || item.recordType.index > records2[key]!.recordType.index) {
+      continue;
+    }
+    recs.add(records2[key]!);
+  }
+  return recs;
 }
