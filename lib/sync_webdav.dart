@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
-import 'package:path/path.dart' as p;
 
+import 'note_data.dart';
 import 'hive.dart';
 import 'webdav.dart';
 
@@ -23,7 +23,7 @@ class SyncWebdav {
   bool isInit = false;
   bool isRunning = false;
   Duration _duration = const Duration(seconds: 30);
-  DateTime lastTime = DateTime.now();
+  late DateTime lastTime;
 
   Timer? timer;
   late WebdavClient _client;
@@ -38,6 +38,7 @@ class SyncWebdav {
     if (duration != null) {
       _duration = duration;
     }
+    lastTime = DateTime.now().subtract(_duration);
     loop();
     isInit = true;
   }
@@ -59,13 +60,13 @@ class SyncWebdav {
       isRunning = true;
 
       await lock();
+      var records = hiveGetRecords();
+      var lzRecords = zipRecords(records);
+      var ret = await _client.download('record_mate');
+      var cRecords = _toRecords(json.decode(ret));
 
-      var list = await _client.client.readDir(p.join('/', 'Note'));
-      for (var f in list) {
-        if (kDebugMode) {
-          print('${f.name} ${f.path} isDir:${f.isDir}');
-        }
-      }
+      var downWait = diffRecords(lzRecords, cRecords);
+      var upWait = diffRecords(cRecords, lzRecords);
 
       lastTime = DateTime.now();
     } catch (e) {
@@ -110,3 +111,12 @@ class SyncWebdav {
 }
 
 var syncWebdav = SyncWebdav();
+
+Map<String, RecordMate> _toRecords(List<dynamic> jsonInstance) {
+  List<RecordMate> records = [];
+  for (var i in jsonInstance) {
+    var rm = RecordMate.fromJson(i);
+    records.add(rm);
+  }
+  return zipRecords(records);
+}

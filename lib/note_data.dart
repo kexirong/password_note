@@ -4,7 +4,7 @@ enum RecordType { create, update, delete }
 
 enum ItemType { group, account }
 
-// typedef ID = String;
+typedef ID = String;
 
 class RecordMate {
   String id;
@@ -17,14 +17,14 @@ class RecordMate {
 
   RecordMate.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        recordType = RecordType.values[json['recordType']],
-        itemType = ItemType.values[json['itemType']],
+        recordType = RecordType.values[json['record_type']],
+        itemType = ItemType.values[json['item_type']],
         timestamp = json['timestamp'];
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
-        'recordType': recordType.index,
-        'itemType': itemType.index,
+        'record_type': recordType.index,
+        'item_type': itemType.index,
         'timestamp': timestamp
       };
 }
@@ -92,8 +92,8 @@ class NoteAccount {
   }
 }
 
-Map<String, RecordMate> zipRecords(List<RecordMate> records) {
-  Map<String, RecordMate> recs = {};
+Map<ID, RecordMate> zipRecords(List<RecordMate> records) {
+  Map<ID, RecordMate> recs = {};
   for (var rec in records) {
     var item = recs[rec.id];
     if (item == null) {
@@ -110,18 +110,20 @@ Map<String, RecordMate> zipRecords(List<RecordMate> records) {
   return recs;
 }
 
-List< RecordMate> diffRecords(Map<String, RecordMate>  records1,Map<String, RecordMate>  records2) {
-   List<RecordMate> recs = [];
+List<RecordMate> diffRecords(Map<ID, RecordMate> records1, Map<ID, RecordMate> records2) {
+  List<RecordMate> recs = [];
   for (var key in records2.keys) {
     var item = records1[key];
     if (item == null) {
       recs.add(records2[key]!);
       continue;
     }
-    if (item.timestamp > records2[key]!.timestamp || item.recordType.index > records2[key]!.recordType.index) {
+    if (item.timestamp > records2[key]!.timestamp ||
+        item.recordType.index > records2[key]!.recordType.index) {
       continue;
     }
     recs.add(records2[key]!);
   }
   return recs;
 }
+

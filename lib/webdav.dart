@@ -27,14 +27,15 @@ class WebdavClient {
     _client.setReceiveTimeout(5000);
   }
 
-  Future<List<String>> list({String? path}) async {
+  Future<List<String>> list({String? prefix, String? path}) async {
     path ??= rootPath;
     var result = <String>[];
     var data = await _client.readDir(path);
     for (var i in data) {
-      if (i.name != null) {
-        result.add(i.name!);
+      if (i.name == null || (prefix != null && !prefix.startsWith(i.name!))) {
+        continue;
       }
+      result.add(i.name!);
     }
     return result;
   }

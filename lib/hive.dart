@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'note_data.dart';
 import 'encrypt.dart';
@@ -27,6 +28,17 @@ List<NoteGroup> hiveGetAllGroups() {
   return groups;
 }
 
+NoteGroup? hiveGetGroup(String id) {
+  var groupBox = Hive.box<String>(hiveNoteGroupBox);
+  var element = groupBox.get(id);
+  if (element == null) {
+    return null;
+  }
+
+  var jsonMap = json.decode(element);
+  return NoteGroup.fromJson(jsonMap);
+}
+
 List<NoteAccount> hiveGetAllAccounts() {
   var accounts = <NoteAccount>[];
   var accountBox = Hive.box<String>(hiveNoteAccountBox);
@@ -49,6 +61,29 @@ List<NoteAccount> hiveGetAllAccounts() {
   return accounts;
 }
 
+NoteAccount? hiveGetAccount(String id) {
+  var accountBox = Hive.box<String>(hiveNoteAccountBox);
+  var secret = hiveGetStringSecret();
+
+  var element = accountBox.get(id);
+  if (element == null) {
+    return null;
+  }
+  var jsonMap = json.decode(element);
+  if (jsonMap.containsKey('cipher')) {
+    try {
+      var deSting = decrypt(secret!, jsonMap);
+      jsonMap = json.decode(deSting) as Map<String, dynamic>;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return null;
+    }
+  }
+  return NoteAccount.fromJson(jsonMap);
+}
+
 void hivePutAccount(NoteAccount account) {
   var secret = hiveGetStringSecret();
 
@@ -58,7 +93,7 @@ void hivePutAccount(NoteAccount account) {
 void _hivePutAccount(String secret, NoteAccount account) {
   var accountBox = Hive.box<String>(hiveNoteAccountBox);
   if (secret.isNotEmpty) {
-    var accountE = encrypt(secret, json.encode(account.toJson()));
+    var accountE = encrypt(secret, json.encode(account));
     accountE['id'] = account.id;
     accountE['updated_at'] = account.updatedAt;
     accountE['encrypt_at'] = DateTime.now().millisecondsSinceEpoch;
@@ -91,7 +126,7 @@ void hiveSetStringSecret(String secret) {
   var accounts = hiveGetAllAccounts();
 
   for (var account in accounts) {
-    _hivePutAccount(secret ?? "", account);
+    _hivePutAccount(secret, account);
   }
   settingBox.put('secret', secret);
 }

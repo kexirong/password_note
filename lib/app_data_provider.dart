@@ -41,7 +41,7 @@ class AppData extends ChangeNotifier {
     var recordBox = Hive.box<String>(hiveRecordMateBox);
     var rm = RecordMate(itemID, itemType, type);
     _records.add(rm);
-    recordBox.put(rm.id, json.encode(rm.toJson()));
+    recordBox.put(rm.id, json.encode(rm));
   }
 
   void noteGroupSetName(int index, String newName) {
@@ -50,7 +50,7 @@ class AppData extends ChangeNotifier {
     g.updatedAt = DateTime.now().millisecondsSinceEpoch;
     recordChange(RecordType.update, _groups[index].id, ItemType.group);
     var groupBox = Hive.box<String>(hiveNoteGroupBox);
-    groupBox.put(g.id, json.encode(g.toJson()));
+    groupBox.put(g.id, json.encode(g));
     notifyListeners();
   }
 
@@ -58,7 +58,7 @@ class AppData extends ChangeNotifier {
     _groups.add(group);
     recordChange(RecordType.create, group.id, ItemType.group);
     var groupBox = Hive.box<String>(hiveNoteGroupBox);
-    groupBox.put(group.id, json.encode(group.toJson()));
+    groupBox.put(group.id, json.encode(group));
     notifyListeners();
   }
 
