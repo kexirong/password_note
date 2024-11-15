@@ -55,7 +55,7 @@ class GroupListWidget extends StatelessWidget {
     if (kDebugMode) {
       print("###################build Group###########################");
     }
-    final appData = Provider.of<AppData>(context);
+    final appData = Provider.of<NoteDataModel>(context);
 
     var groups = appData.noteGroups;
 

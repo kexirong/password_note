@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
     if (kDebugMode) {
       print("###################build home###########################");
     }
-    final appData = Provider.of<AppData>(context);
+    final appData = Provider.of<NoteDataModel>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,

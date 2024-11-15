@@ -1,21 +1,27 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'hive.dart';
 import 'note_data.dart';
 
-class AppData extends ChangeNotifier {
-  AppData({List<NoteGroup>? groups, List<NoteAccount>? accounts, List<RecordMate>? records})
-      : _groups = groups ?? [],
-        _accounts = accounts ?? [],
-        _records = records ?? [];
+class NoteDataModel extends ChangeNotifier {
+  // NoteDataModel({List<NoteGroup>? groups, List<NoteAccount>? accounts, List<RecordMate>? records})
+  //     : _groups = groups ?? [],
+  //       _accounts = accounts ?? [],
+  //       _records = records ?? [];
 
-  final List<NoteGroup> _groups;
+  late final List<NoteGroup> _groups;
 
-  final List<NoteAccount> _accounts;
+  late final List<NoteAccount> _accounts;
 
-  final List<RecordMate> _records;
+  late final List<RecordMate> _records;
+
+  NoteDataModel() {
+    _groups = hiveGetAllGroups();
+    _accounts = hiveGetAllAccounts();
+    _records = hiveGetRecords();
+  }
 
   int _index = 0;
 

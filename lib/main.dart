@@ -3,7 +3,7 @@ import 'package:password_note/util.dart';
 import 'package:provider/provider.dart';
 import 'app_data_provider.dart';
 import 'home.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'hive.dart';
 import 'sync_webdav.dart';
 
@@ -12,7 +12,7 @@ void main() async {
 
   runApp(const MyApp());
   var settingBox = Hive.box<String>(hiveSettingBox);
-  var deviceID = settingBox.get('device_id');
+  var deviceID =  settingBox.get('device_id');
   if (deviceID == null) {
     settingBox.put('device_id', uuid());
   }
@@ -22,6 +22,7 @@ void main() async {
   var webdavPwd = settingBox.get('webdav_pwd', defaultValue: '')!;
   var webdavPath = settingBox.get('webdav_path', defaultValue: '')!;
   if (webdavUrl.isNotEmpty && webdavUser.isNotEmpty && webdavPwd.isNotEmpty) {
+    var syncWebdav = SyncWebdav();
     syncWebdav.init(webdavUrl, webdavUser, webdavPwd, webdavPath);
   }
 }
@@ -33,12 +34,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     const title = '密码本子';
 
-    var groups = hiveGetAllGroups();
-    var accounts = hiveGetAllAccounts();
-    var records = hiveGetRecords();
+    // var groups = hiveGetAllGroups();
+    // var accounts = hiveGetAllAccounts();
+    // var records = hiveGetRecords();
 
     return ChangeNotifierProvider(
-      create: (context) => AppData(groups: groups, accounts: accounts, records: records),
+      create: (context) => NoteDataModel(),
       child: MaterialApp(
         title: title,
         theme: ThemeData(

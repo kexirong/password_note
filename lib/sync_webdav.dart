@@ -3,7 +3,8 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
+// import 'package:provider/provider.dart';
 
 import 'note_data.dart';
 import 'hive.dart';
@@ -68,6 +69,7 @@ class SyncWebdav {
       var downWait = diffRecords(lzRecords, cRecords);
       var upWait = diffRecords(cRecords, lzRecords);
 
+
       lastTime = DateTime.now();
     } catch (e) {
       if (kDebugMode) {
@@ -110,7 +112,7 @@ class SyncWebdav {
   }
 }
 
-var syncWebdav = SyncWebdav();
+// var syncWebdav = SyncWebdav();
 
 Map<String, RecordMate> _toRecords(List<dynamic> jsonInstance) {
   List<RecordMate> records = [];

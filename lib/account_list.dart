@@ -19,7 +19,7 @@ class AccountListWidget extends StatelessWidget {
     if (kDebugMode) {
       print("###################build Account###########################");
     }
-    final appData = Provider.of<AppData>(context);
+    final appData = Provider.of<NoteDataModel>(context);
 
     List<NoteAccount> accounts;
     if (_filter == null) {
