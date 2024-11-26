@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hive_ce/hive.dart';
-import 'hive.dart';
+import 'package:provider/provider.dart';
+
+import '../provider/app_data_provider.dart';
 
 class SettingPasswordForm extends StatefulWidget {
   const SettingPasswordForm({super.key});
@@ -16,8 +17,9 @@ class MyCustomFormState extends State<SettingPasswordForm> {
 
   @override
   Widget build(BuildContext context) {
-    var settingBox = Hive.box<String>(hiveSettingBox);
-    var secret = settingBox.get('secret');
+    final appData = Provider.of<NoteDataModel>(context);
+
+    var secret = appData.secret;
     var password = TextEditingController(text: '');
     var newPassword = TextEditingController(text: '');
     return Scaffold(
@@ -57,7 +59,8 @@ class MyCustomFormState extends State<SettingPasswordForm> {
                     if (!_formKey.currentState!.validate()) {
                       return;
                     }
-                    hiveSetStringSecret(newPassword.text);
+                    // hiveSetStringSecret(newPassword.text);
+                    appData.setSecret(newPassword.text);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('保存成功')),
                     );

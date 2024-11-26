@@ -1,14 +1,14 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'note_data.dart';
+import '/model/note_data.dart';
 
 enum _Action { add, edit }
 
 class AccountAction extends StatefulWidget {
   AccountAction(this.account, {super.key})
       : _action = account.name.isEmpty ? _Action.add : _Action.edit;
-  final NoteAccount account;
+  final PlainAccount account;
   final _Action _action;
 
   @override
@@ -114,7 +114,7 @@ class AccountActionState extends State<AccountAction> {
                   OutlinedButton(
                       onPressed: rndPassword,
                       style: ButtonStyle(
-                        shape: MaterialStateProperty.all(
+                        shape: WidgetStateProperty.all(
                             const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
                       ),
                       child: const Text(
@@ -124,7 +124,7 @@ class AccountActionState extends State<AccountAction> {
                       )),
                   OutlinedButton(
                     style: ButtonStyle(
-                      shape: MaterialStateProperty.all(
+                      shape: WidgetStateProperty.all(
                           const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
                     ),
                     onPressed: () {
@@ -142,7 +142,7 @@ class AccountActionState extends State<AccountAction> {
                   ),
                   OutlinedButton(
                     style: ButtonStyle(
-                      shape: MaterialStateProperty.all(
+                      shape: WidgetStateProperty.all(
                           const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
                     ),
                     onPressed: () {

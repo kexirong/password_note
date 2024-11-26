@@ -139,22 +139,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  hive_ce:
-    dependency: "direct main"
-    description:
-      name: hive_ce
-      sha256: ab1b79ce8d479cd3a8f9b90fe70219f368ca846f86eb4a1e84f4f11483cef65f
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.7.0+1"
-  hive_ce_flutter:
-    dependency: "direct main"
-    description:
-      name: hive_ce_flutter
-      sha256: e74e11d3ed622630ff1ee758037dab21a59d2182fa7b61378726c673742d2ab9
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   http_parser:
     dependency: transitive
     description:

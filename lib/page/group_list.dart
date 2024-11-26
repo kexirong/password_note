@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'app_data_provider.dart';
-import 'note_data.dart';
+import '/provider/app_data_provider.dart';
+import '/model/note_data.dart';
 
 Future<String?> inputGroupName({String? noteGroupName, required BuildContext context}) async {
   var add = noteGroupName == null;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hive_ce/hive.dart';
-import 'hive.dart';
+import 'package:password_note/model/setting.dart';
+import 'package:provider/provider.dart';
+
+import '../provider/app_data_provider.dart';
 
 class SettingSyncForm extends StatefulWidget {
   const SettingSyncForm({super.key});
@@ -16,15 +18,14 @@ class MyCustomFormState extends State<SettingSyncForm> {
 
   @override
   Widget build(BuildContext context) {
-    var settingBox = Hive.box<String>(hiveSettingBox);
-    var webdavUrl = settingBox.get('webdav_url');
-    var webdavUser = settingBox.get('webdav_user');
-    var webdavPwd = settingBox.get('webdav_pwd');
-    var webdavPath = settingBox.get('webdav_path');
-    var urlController = TextEditingController(text: webdavUrl);
-    var userController = TextEditingController(text: webdavUser);
-    var pwdController = TextEditingController(text: webdavPwd);
-    var pathController = TextEditingController(text: webdavPath);
+    final appData = Provider.of<NoteDataModel>(context);
+
+    var webdavConf = appData.webdavConf;
+
+    var urlController = TextEditingController(text: webdavConf?.url ?? '');
+    var userController = TextEditingController(text: webdavConf?.user ?? '');
+    var pwdController = TextEditingController(text: webdavConf?.password ?? '');
+    var pathController = TextEditingController(text: webdavConf?.path ?? '');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -85,11 +86,9 @@ class MyCustomFormState extends State<SettingSyncForm> {
                       return;
                     }
 
-                    var settingBox = Hive.box<String>(hiveSettingBox);
-                    settingBox.put('webdav_url', urlController.text);
-                    settingBox.put('webdav_user', userController.text);
-                    settingBox.put('webdav_pwd', pwdController.text);
-                    settingBox.put('webdav_path', pathController.text);
+                    var newWebdavConf = WebdavConfig(urlController.text, userController.text,
+                        pwdController.text, pathController.text);
+                    appData.setWebdavConfig(newWebdavConf);
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('保存成功')),

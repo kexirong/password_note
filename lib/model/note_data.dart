@@ -73,9 +73,9 @@ class NoteAccount {
   String name;
   String? groupID;
   int createdAt;
-  int updatedAt;
+  int updatedAt = 0;
 
-  NoteAccount(this.name, {String? id, int? createdAt, this.updatedAt = 0})
+  NoteAccount(this.name, {String? id, int? createdAt})
       : id = id ?? uuid(),
         createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch;
 
@@ -93,6 +93,16 @@ class NoteAccount {
         'created_at': createdAt,
         'updated_at': updatedAt,
       };
+
+  factory NoteAccount.copy(NoteAccount acct) {
+    if (acct is PlainAccount) {
+      return PlainAccount.fromJson(acct.toJson());
+    }
+    if (acct is EncryptAccount) {
+      return EncryptAccount.fromJson(acct.toJson());
+    }
+    return NoteAccount.fromJson(acct.toJson());
+  }
 }
 
 class PlainAccount extends NoteAccount {
@@ -135,40 +145,57 @@ class PlainAccount extends NoteAccount {
       jsonEncode(_toJson()),
       iv: iv,
     );
-    return EncryptAccount(
+    var eAccount = EncryptAccount(
       name,
       iv.base64,
+      md5.convert(utf8.encode(password)).toString(),
       encrypted.base64,
       DateTime.now().millisecondsSinceEpoch,
       id: id,
-      createdAt: updatedAt,
+      createdAt: createdAt,
     );
+    eAccount.updatedAt = eAccount.encryptedAt;
+    return eAccount;
+  }
+
+  void assign(PlainAccount acct) {
+    id = acct.id;
+    name = acct.name;
+    groupID = acct.groupID;
+    createdAt = acct.createdAt;
+    updatedAt = acct.updatedAt;
+    account = acct.account;
+    password = acct.password;
+    extendField = acct.extendField;
   }
 }
 
 class EncryptAccount extends NoteAccount {
-  int encryptAt;
   String cipher = 'AES';
   AESMode mode = AESMode.cbc;
   String iv;
+  String mKey;
+  int encryptedAt;
   String data;
 
-  EncryptAccount(super.name, this.iv, this.data, this.encryptAt,
-      {super.id, super.createdAt, super.updatedAt});
+  EncryptAccount(super.name, this.iv, this.mKey, this.data, this.encryptedAt,
+      {super.id, super.createdAt});
 
   EncryptAccount.fromJson(super.json)
-      : encryptAt = json['encrypt_at'],
-        cipher = json['cipher'],
+      : cipher = json['cipher'],
         mode = AESMode.values.firstWhere((el) => el.name == json['mode']),
         iv = json['iv'],
+        mKey = json['m_key'],
+        encryptedAt = json['encrypted_at'],
         data = json['data'],
         super.fromJson();
 
   Map<String, dynamic> _toJson() => <String, dynamic>{
-        'encrypt_at': encryptAt,
         'cipher': cipher,
         'mode': mode.name,
         'iv': iv,
+        'encrypted_at': encryptedAt,
+        'm_key': mKey,
         'data': data
       };
 
@@ -197,6 +224,20 @@ class EncryptAccount extends NoteAccount {
     var json = super.toJson();
     json.addAll(jsonDecode(decrypted));
     return PlainAccount.fromJson(json);
+  }
+
+  void assign(EncryptAccount acct) {
+    id = acct.id;
+    name = acct.name;
+    groupID = acct.groupID;
+    createdAt = acct.createdAt;
+    updatedAt = acct.updatedAt;
+    cipher = acct.cipher;
+    mode = acct.mode;
+    iv = acct.iv;
+    mKey = acct.mKey;
+    encryptedAt = acct.encryptedAt;
+    data = acct.data;
   }
 }
 

@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:password_note/account_search.dart';
+import 'package:password_note/page/account_search.dart';
 
 import 'package:provider/provider.dart';
 
 import 'account_list.dart';
 import 'group_list.dart';
-import 'note_data.dart';
+import '/model/note_data.dart';
 import 'account_action.dart';
 
-import 'app_data_provider.dart';
+import '/provider/app_data_provider.dart';
 import 'setting_password.dart';
 import 'setting_sync.dart';
 
@@ -49,7 +49,7 @@ class HomePage extends StatelessWidget {
                 var result = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return AccountAction(NoteAccount(''));
+                    return AccountAction(PlainAccount(''));
                   }),
                 );
 

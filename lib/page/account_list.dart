@@ -2,13 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:password_note/util.dart';
 import 'package:provider/provider.dart';
 
 import 'account_action.dart';
-import 'app_data_provider.dart';
-import 'note_data.dart';
-
-
+import '/provider/app_data_provider.dart';
+import '/model/note_data.dart';
 
 class AccountListWidget extends StatelessWidget {
   const AccountListWidget({super.key, String? filter}) : _filter = filter;
@@ -34,10 +33,23 @@ class AccountListWidget extends StatelessWidget {
     return ListView.builder(
       itemCount: accounts.length,
       itemBuilder: (BuildContext context, int index) {
-        final noteAccount = accounts[index];
+        var account = NoteAccount.copy(accounts[index]);
+        if (account is EncryptAccount) {
+          var secret = appData.getAttSecret(account.mKey);
+          if (secret != null) {
+            account = account.decrypt(secret);
+          }
+        }
         return InkWell(
             onTap: () async {
-              var result = await showAccountDetail(noteAccount, context);
+              if (account is EncryptAccount) {
+                const snackBar = SnackBar(
+                  content: Text('已加密，请设置密码'),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                return;
+              }
+              var result = await showAccountDetail(account as PlainAccount, context);
               if (result is NoteAccount) {
                 appData.updateNoteAccount(result);
               }
@@ -52,10 +64,17 @@ class AccountListWidget extends StatelessWidget {
                   children: [
                     SlidableAction(
                       onPressed: (_) async {
+                        if (account is EncryptAccount) {
+                          const snackBar = SnackBar(
+                            content: Text('已加密，请设置密码'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          return;
+                        }
                         var result = await Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) {
-                            return AccountAction(noteAccount);
+                            return AccountAction(account as PlainAccount);
                           }),
                         );
 
@@ -70,7 +89,7 @@ class AccountListWidget extends StatelessWidget {
                     ),
                     SlidableAction(
                       onPressed: (_) {
-                        appData.noteAccountRemoveByID(noteAccount.id);
+                        appData.noteAccountRemoveByID(account.id);
                       },
                       backgroundColor: Theme.of(context).colorScheme.error,
                       foregroundColor: Theme.of(context).colorScheme.surface,
@@ -95,14 +114,14 @@ class AccountListWidget extends StatelessWidget {
                     children: <Widget>[
                       Expanded(
                         flex: 1,
-                        child: Text(noteAccount.name,
+                        child: Text(account.name,
                             textAlign: TextAlign.left, overflow: TextOverflow.ellipsis),
                       ),
                       Expanded(
                         flex: 2,
                         child: Padding(
                           padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(noteAccount.account ?? '',
+                          child: Text(getAccount(account),
                               textAlign: TextAlign.left, overflow: TextOverflow.ellipsis),
                         ),
                       ),
@@ -115,7 +134,7 @@ class AccountListWidget extends StatelessWidget {
     );
   }
 
-  Future<NoteAccount?> showAccountDetail(NoteAccount account, BuildContext context) async {
+  Future<NoteAccount?> showAccountDetail(PlainAccount account, BuildContext context) async {
     return await showDialog<NoteAccount>(
       context: context,
       builder: (context) {

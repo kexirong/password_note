@@ -1,4 +1,5 @@
 import 'dart:math';
+import '/model/note_data.dart';
 
 final _intToHex = () {
   List<String> cache = List<String>.filled(256, "");
@@ -36,4 +37,11 @@ String uuid() {
 
 bool isNotEmptyString(String? str) {
   return str != null && str.isNotEmpty;
+}
+
+String getAccount(NoteAccount account) {
+  if (account is EncryptAccount) {
+    return '***未解密***';
+  }
+  return (account as PlainAccount).account ?? '';
 }
