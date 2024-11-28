@@ -14,6 +14,7 @@ class NoteAccountStore {
     var nas = <NoteAccount>[];
     var records = await _store.find(dbc);
     for (var rec in records) {
+      print(rec);
       var jsonMap = jsonDecode(rec.value) as Map<String, dynamic>;
 
       if (jsonMap.containsKey('cipher')) {

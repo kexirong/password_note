@@ -31,9 +31,6 @@ class MyHomePageState extends State<MyHomePage> {
   // webdav
   late webdav.Client client;
 
-  // TODO need change your test url && user && pwd
-  // if you use browser and received 'XMLHttpRequest error'  you need check cors!!!
-  // https://stackoverflow.com/questions/65630743/how-to-solve-flutter-web-api-cors-error-only-with-dart-code
   final url = '';
   final user = '';
   final pwd = '';

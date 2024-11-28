@@ -154,6 +154,7 @@ class PlainAccount extends NoteAccount {
       id: id,
       createdAt: createdAt,
     );
+    eAccount.groupID = groupID;
     eAccount.updatedAt = eAccount.encryptedAt;
     return eAccount;
   }

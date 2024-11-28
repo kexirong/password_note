@@ -10,24 +10,13 @@ import '/db/db.dart';
 import 'sync/sync_webdav.dart';
 
 void main() async {
-
   runApp(const MyApp());
-  // var settingBox = Hive.box<String>(hiveSettingBox);
-  // var deviceID =  settingBox.get('device_id');
-  // if (deviceID == null) {
-  //   settingBox.put('device_id', uuid());
-  // }
 
-  // var webdavUrl = settingBox.get('webdav_url', defaultValue: '')!;
-  // var webdavUser = settingBox.get('webdav_user', defaultValue: '')!;
-  // var webdavPwd = settingBox.get('webdav_pwd', defaultValue: '')!;
-  // var webdavPath = settingBox.get('webdav_path', defaultValue: '')!;
+  var webdavConf = await SettingStore().getWebdav(await getDBC());
 
-  var webdavConf=await SettingStore().getWebdav(await getDBC());
-
-  if (webdavConf!=null) {
+  if (webdavConf != null) {
     var syncWebdav = SyncWebdav();
-    syncWebdav.init(webdavConf);
+    syncWebdav.start(webdavConf);
   }
 }
 
@@ -37,11 +26,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const title = '密码本子';
-     var ndm=NoteDataModel();
-     ndm.loadData();
-    // var groups = hiveGetAllGroups();
-    // var accounts = hiveGetAllAccounts();
-    // var records = hiveGetRecords();
+    var ndm = NoteDataModel();
+    ndm.loadData();
 
     return ChangeNotifierProvider(
       create: (context) => ndm,

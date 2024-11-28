@@ -21,7 +21,7 @@ class WebdavClient {
         ),
         rootPath = p.join('/', path) {
     _client.setHeaders({'accept-charset': 'utf-8'});
-    client.setHeaders({'content-type': 'text/html'});
+    _client.setHeaders({'content-type': 'text/html'});
     _client.setConnectTimeout(30000);
     _client.setSendTimeout(5000);
     _client.setReceiveTimeout(5000);

@@ -68,7 +68,7 @@ class AccountActionState extends State<AccountAction> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
+    return PopScope<PlainAccount>(
       canPop: false,
       child: Scaffold(
         appBar: AppBar(
@@ -161,7 +161,7 @@ class AccountActionState extends State<AccountAction> {
           ),
         ),
       ),
-      onPopInvoked: (bool didPop) async {
+      onPopInvokedWithResult: (bool didPop, PlainAccount? account) async {
         if (didPop) return;
         bool? doPop = false;
         if (!_saved) {
@@ -244,7 +244,7 @@ class AccountActionState extends State<AccountAction> {
                       // splashColor: Colors.transparent,
                       // highlightColor: Colors.transparent,
                       padding: const EdgeInsets.all(0),
-                      icon:   Icon(
+                      icon: Icon(
                         Icons.highlight_off,
                         size: 20,
                         color: Theme.of(context).colorScheme.secondary,
@@ -311,7 +311,7 @@ class AccountActionState extends State<AccountAction> {
               children: <TextSpan>[
                 TextSpan(
                   text: '[${slider.truncate()}]',
-                  style:   TextStyle(
+                  style: TextStyle(
                     color: Theme.of(context).colorScheme.secondary,
                     fontSize: 18,
                     fontWeight: FontWeight.normal,

@@ -78,10 +78,20 @@ class NoteDataModel extends ChangeNotifier {
     return _attSecrets[mKey];
   }
 
+  //使用mKey获取主密钥/非主密钥的mKey返回空
+  String? getMasterSecret(String mKey) {
+    var secret = _attSecrets[mKey];
+    if (secret == null || secret != _secret) return null;
+    return secret;
+  }
+
   //添加了密钥会重新保存到数据库
-  void addAttSecret(String secret) {
+  void addAttSecret(String secret) async {
+    var db = await getDBC();
+    var aSecrets = await SettingStore().getAttSecrets(db);
+    aSecrets.add(secret);
+    await SettingStore().setSecret(db, jsonEncode(aSecrets));
     _addAttSecret(secret);
-    // 未完成
   }
 
   void _addAttSecret(String secret) {
@@ -92,23 +102,27 @@ class NoteDataModel extends ChangeNotifier {
   Future<void> setSecret(String secret) async {
     var db = await getDBC();
     db.transaction((txn) async {
-      await SettingStore().setSecret(await getDBC(), secret);
+      await SettingStore().setSecret(txn, secret);
       for (var acct in _accounts) {
         if (acct is EncryptAccount) {
           //已加密数据不处理
           //使用当前主密钥加密的数据需要重新加密
-          continue;
+          var mSecret = getMasterSecret(acct.mKey);
+          if (mSecret == null) {
+            continue;
+          }
+          acct = acct.decrypt(mSecret);
         }
         //PlainAccount需做加密处理
         acct = (acct as PlainAccount).encrypt(secret);
-        acct.encryptedAt = DateTime.now().millisecondsSinceEpoch;
+
         var rm = RecordMate(acct.id, ItemType.account, RecordType.update);
         await NoteAccountStore().update(txn, acct);
         await RecordMateStore().add(txn, rm);
       }
       _secret = secret;
+      _addAttSecret(secret);
     });
-
     notifyListeners();
   }
 

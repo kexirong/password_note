@@ -35,30 +35,53 @@ class SyncWebdav {
     return lastTime.add(_duration);
   }
 
-  void init(WebdavConfig conf, {Duration? duration}) {
+  void start(WebdavConfig conf, {Duration? duration}) {
+    isInit = false;
     _client = WebdavClient(conf.url, conf.user, conf.password, path: conf.path, debug: false);
     if (duration != null) {
       _duration = duration;
     }
-    lastTime = DateTime.now().subtract(_duration);
-    loop();
     isInit = true;
+    if (timer == null) {
+      lastTime = DateTime.now().subtract(_duration);
+      loop();
+    }
   }
 
   void loop() {
-    timer = Timer.periodic(const Duration(seconds: 5), _loopCallback);
+    timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      sync();
+    });
   }
 
-  void _loopCallback(Timer timer) async {
+  void stop() {
+    for (var i = 0; i < 3; i++) {
+      if (!isRunning) {
+        return;
+      }
+      Timer(Duration(seconds: 5), () {});
+    }
+  }
+
+  void callbackSync(Timer t) async {
+    if (DateTime.now().isBefore(nextTime)) {
+      return;
+    }
+    if (await sync()) {
+      lastTime = DateTime.now();
+    }
+  }
+
+  Future<bool> sync() async {
     try {
-      if (DateTime.now().isBefore(nextTime) || !isInit || isRunning) {
+      if (!isInit || isRunning) {
         if (kDebugMode) {
           print('sync skip');
         }
-        return;
+        return false;
       }
 
-      if (await hasLock()) return;
+      if (await hasLock()) return false;
       isRunning = true;
 
       await lock();
@@ -70,11 +93,13 @@ class SyncWebdav {
       var downWait = diffRecords(lzRecords, cRecords);
       var upWait = diffRecords(cRecords, lzRecords);
 
-      lastTime = DateTime.now();
+      // lastTime = DateTime.now();
+      return true;
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
+      return false;
     } finally {
       await unlock();
       isRunning = false;
